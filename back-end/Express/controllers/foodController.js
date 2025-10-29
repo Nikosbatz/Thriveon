@@ -4,7 +4,7 @@ const FoodLog = require("../models/foodLog.model.js");
 async function getFoods(req, res) {
   try {
     const foods = await Food.find();
-    console.log(foods[0]);
+
     res.status(200).json(foods);
   } catch (err) {
     console.log(err.message);
@@ -19,7 +19,7 @@ async function getFoods(req, res) {
 
 async function createFood(req, res) {
   const body = req.body;
-  console.log(typeof body.grams);
+
   try {
     const food = await Food.create({
       name: body.name.toLowerCase(),
@@ -123,7 +123,7 @@ async function logUserFood(req, res) {
     );
 
     if (newObject) {
-      console.log("eeddwwww: ", newObject.logs.at(-1).foods.at(-1));
+      //console.log("eeddwwww: ", newObject.logs.at(-1).foods.at(-1));
       res.status(200).json({ message: newObject.logs.at(-1).foods.at(-1) });
     }
     // If a log with current date DOESNT EXIST create a new one (append in the logs array)

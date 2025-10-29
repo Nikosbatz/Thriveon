@@ -2,9 +2,11 @@ import { useContext } from "react";
 import { UserContext } from "../Contexts/UserContext/UserContext";
 import PersonalGoals from "../My Profile/PersonalGoals";
 import { ArrowBigRightDash } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Plan() {
   const { userProfile } = useContext(UserContext);
+  const navigate = useNavigate();
 
   console.log(userProfile.nutritionGoals.calories);
   return (
@@ -20,7 +22,7 @@ export default function Plan() {
           </b>{" "}
           tab.
         </span>
-        <button className="submit_btn">
+        <button onClick={() => navigate("/dashboard")} className="submit_btn">
           <ArrowBigRightDash></ArrowBigRightDash> My Dashboard
         </button>
       </div>

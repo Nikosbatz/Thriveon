@@ -7,11 +7,16 @@ import {
   Ruler,
   Scale,
   Activity,
-  Save,
   Hammer,
+  ClockPlus,
 } from "lucide-react";
-import { useState } from "react";
-import { replace, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { useNavigate, replace } from "react-router-dom";
+import { UserContext } from "../Contexts/UserContext/UserContext";
+import toast from "react-hot-toast";
+import calculateGoals from "./calculateGoals";
+import * as yup from "yup";
+import Plan from "./Plan";
 
 export default function OnBoarding() {
   const [formInputs, setFormInputs] = useState({
@@ -20,17 +25,61 @@ export default function OnBoarding() {
     height: "",
     weight: "",
     activity: "",
+    age: "",
   });
   const navigate = useNavigate();
+  const { userProfile, updateInfo } = useContext(UserContext);
+  const [requestPending, setRequestPending] = useState(false);
+
+  // Form schema for validation
+  const schema = yup.object().shape({
+    goal: yup.number().oneOf([0, 1, 2]).required(),
+    gender: yup.string().oneOf(["male", "female"]).required(),
+    height: yup.number().min(100).max(250).required(),
+    weight: yup.number().min(30).max(180).required(),
+    age: yup.number().min(13).max(120).required(),
+    activity: yup.number().oneOf([0, 1, 2, 3]).required(),
+  });
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(formInputs);
-    navigate("./plan", replace);
+    setRequestPending(true);
+
+    const formInputsClone = {
+      ...formInputs,
+      weight: Number(formInputs.weight),
+      height: Number(formInputs.height),
+      age: Number(formInputs.age),
+    };
+
+    // Calculate Nutrition and Health Goals
+    const { nutritionGoals, healthGoals } = calculateGoals(formInputsClone);
+    formInputsClone.nutritionGoals = nutritionGoals;
+    formInputsClone.healthGoals = healthGoals;
+
+    try {
+      // Validate Form Values
+      schema.validateSync(formInputsClone, { abortEarly: false });
+
+      // Send request to back-end VIA userContext's "updateInfo()"
+      await updateInfo(formInputsClone);
+
+      // Navigate user to his custom plan
+      navigate("./plan", replace);
+    } catch (error) {
+      // Show multiple toasts if multiple validation errors occur
+      if (error.inner && error.inner.length > 0) {
+        error.inner.forEach((err) => toast.error(err.message));
+      } else {
+        // if only 1 error then show toast
+        toast.error(error.message);
+      }
+    }
+    setRequestPending(false);
   }
+
   //TODO: make the render of form input options throught .map() method
   //TODO: When user logs in return the User document from the DB. to check if the on-boarding is completed
-  //TODO: implement function to calculate the user's goals and send the to the Back-End to store in DB
   return (
     <main className="on-boarding-container">
       <div className="welcome-container modal">
@@ -43,20 +92,20 @@ export default function OnBoarding() {
             <h3>What is your Goal?</h3>
             <ul>
               <li
-                className={formInputs.goal === 1 ? "active" : null}
-                onClick={() => setFormInputs((prev) => ({ ...prev, goal: 1 }))}
+                className={formInputs.goal === 0 ? "active" : null}
+                onClick={() => setFormInputs((prev) => ({ ...prev, goal: 0 }))}
               >
                 <ArrowDown></ArrowDown>Lose Weight
               </li>
               <li
-                className={formInputs.goal === 2 ? "active" : null}
-                onClick={() => setFormInputs((prev) => ({ ...prev, goal: 2 }))}
+                className={formInputs.goal === 1 ? "active" : null}
+                onClick={() => setFormInputs((prev) => ({ ...prev, goal: 1 }))}
               >
                 <Dumbbell></Dumbbell>Gain Mass
               </li>
               <li
-                className={formInputs.goal === 3 ? "active" : null}
-                onClick={() => setFormInputs((prev) => ({ ...prev, goal: 3 }))}
+                className={formInputs.goal === 2 ? "active" : null}
+                onClick={() => setFormInputs((prev) => ({ ...prev, goal: 2 }))}
               >
                 <Scale></Scale>Maintain Weight
               </li>
@@ -121,18 +170,44 @@ export default function OnBoarding() {
                 />
               </div>
             </div>
+            <div>
+              <h3>Age:</h3>
+              <div className="input-container">
+                <ClockPlus></ClockPlus>
+                <input
+                  onChange={(e) =>
+                    setFormInputs((prev) => ({
+                      ...prev,
+                      age: e.target.value,
+                    }))
+                  }
+                  value={formInputs.age}
+                  type="number"
+                  placeholder="years"
+                  maxLength={3}
+                />
+              </div>
+            </div>
           </div>
           <div className="user-choice-list-container">
             <h3>Activity Frequency:</h3>
             <ul>
+              <li
+                className={formInputs.activity === 0 ? "active" : null}
+                onClick={() =>
+                  setFormInputs((prev) => ({ ...prev, activity: 0 }))
+                }
+              >
+                <Activity size={12}></Activity>
+                None
+              </li>
               <li
                 className={formInputs.activity === 1 ? "active" : null}
                 onClick={() =>
                   setFormInputs((prev) => ({ ...prev, activity: 1 }))
                 }
               >
-                <Activity size={12}></Activity>
-                None
+                <Activity size={15}></Activity>Light
               </li>
               <li
                 className={formInputs.activity === 2 ? "active" : null}
@@ -140,7 +215,7 @@ export default function OnBoarding() {
                   setFormInputs((prev) => ({ ...prev, activity: 2 }))
                 }
               >
-                <Activity size={15}></Activity>Light
+                <Activity size={18}></Activity>moderate
               </li>
               <li
                 className={formInputs.activity === 3 ? "active" : null}
@@ -148,24 +223,22 @@ export default function OnBoarding() {
                   setFormInputs((prev) => ({ ...prev, activity: 3 }))
                 }
               >
-                <Activity size={18}></Activity>moderate
-              </li>
-              <li
-                className={formInputs.activity === 4 ? "active" : null}
-                onClick={() =>
-                  setFormInputs((prev) => ({ ...prev, activity: 4 }))
-                }
-              >
                 <Activity size={25}></Activity>Active
               </li>
             </ul>
           </div>
-          <button className="submit_btn" type="submit" onClick={handleSubmit}>
-            <Hammer></Hammer>
-            Build Plan
-          </button>
+          {requestPending ? (
+            <div className="loader2"></div>
+          ) : (
+            <button className="submit_btn" type="submit" onClick={handleSubmit}>
+              <Hammer></Hammer>
+              Build Plan
+            </button>
+          )}
         </form>
       </div>
     </main>
   );
 }
+
+const goals = ["Lose Weight", "Gain Mass", "Maintain Weight"];

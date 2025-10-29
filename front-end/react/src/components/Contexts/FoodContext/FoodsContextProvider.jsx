@@ -24,6 +24,7 @@ export default function FoodsContextProvider({ children }) {
       try {
         const foodsData = await getFoods("/foods");
         const todaysFoodsData = await getUserTodayFoods();
+        console.log("GET USER FOODS");
         //console.log(foodsData);
         //console.log(todaysFoodsData);
         setFoods(foodsData);

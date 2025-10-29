@@ -44,7 +44,8 @@ export default function Login() {
       await register(registerForm.email.toLowerCase(), registerForm.password);
       navigate("../verify-email");
     } catch (error) {
-      alert("Error on the Register");
+      alert(error.message);
+      setLoginPending(false);
     }
   }
 
@@ -69,7 +70,7 @@ export default function Login() {
               <label htmlFor="e-mail">E-mail:</label>
               <input
                 id="e-mail"
-                type="text"
+                type="email"
                 placeholder="E-mail"
                 value={loginForm.email}
                 onChange={(e) =>
@@ -142,7 +143,7 @@ export default function Login() {
               <label htmlFor="e-mail">E-mail:</label>
               <input
                 id="e-mail"
-                type="text"
+                type="email"
                 placeholder="E-mail"
                 value={registerForm.email}
                 onChange={(e) =>
@@ -227,11 +228,7 @@ export default function Login() {
             {loginPending ? (
               <div className="loader2"></div>
             ) : (
-              <button
-                type="submit"
-                className="button"
-                onClick={handleRegisterRequest}
-              >
+              <button type="submit" className="button">
                 Sign Up
               </button>
             )}

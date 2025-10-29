@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { postEmailVerificationToken } from "../../api/requests";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function VerifyEmail() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
@@ -76,6 +76,7 @@ export default function VerifyEmail() {
           ))}
         </div>
       </form>
+      <Link to={"/dashboard"}>Skip Verification</Link>
     </div>
   );
 }

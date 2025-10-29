@@ -31,8 +31,6 @@ async function postTodayUserActivity(req, res) {
   const currentDate = new Date().toISOString().split("T")[0];
   const body = req.body;
 
-  console.log(body);
-
   // try to append activity object in an existing Log
   try {
     let data = await FoodLog.findOneAndUpdate(

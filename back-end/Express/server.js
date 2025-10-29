@@ -2,6 +2,7 @@ const connectDB = require("./config/db.js");
 const express = require("express");
 const dotenv = require("dotenv");
 const expressMongoSanitize = require("@exortek/express-mongo-sanitize");
+const path = require("path");
 
 dotenv.config();
 
@@ -34,5 +35,22 @@ app.use("/api/foods", foodRouter);
 app.use("/api/user", userRouter);
 app.use("/api/health", healthRouter);
 app.use("/api/activities", activitiesRouter);
+
+console.log(process.env.NODE_ENV === "production");
+
+// PRODUCTION MODE ONLY
+if (process.env.NODE_ENV === "production") {
+  console.log(
+    "Static folder path:",
+    path.join(__dirname, "../../front-end/react/build")
+  );
+  app.use(express.static(path.join(__dirname, "../../front-end/react/build")));
+
+  app.get(/(.*)/, (req, res) => {
+    res.sendFile(
+      path.resolve(__dirname, "../../front-end/react/build/index.html")
+    );
+  });
+}
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

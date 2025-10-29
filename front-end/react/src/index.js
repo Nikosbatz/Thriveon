@@ -23,6 +23,8 @@ import ForgotPassword from "./components/Auth/ForgotPassword";
 import ResetPassword from "./components/Auth/ResetPassword";
 import OnBoarding from "./components/OnBoarding/OnBoarding";
 import Plan from "./components/OnBoarding/Plan";
+import UserContextProvider from "./components/Contexts/UserContext/UserContextProvider";
+import OnBoardingLayout from "./components/OnBoarding/OnBoardingLayout";
 
 const router = createBrowserRouter([
   {
@@ -46,9 +48,9 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <ProtectedRoute>
+      <UserContextProvider>
         <MainLayout />
-      </ProtectedRoute>
+      </UserContextProvider>
     ),
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
@@ -65,11 +67,18 @@ const router = createBrowserRouter([
           { path: "security", element: <Security /> },
         ],
       },
-      {
-        path: "/on-boarding",
-        element: <OnBoarding></OnBoarding>,
-      },
-      { path: "/on-boarding/plan", element: <Plan></Plan> },
+    ],
+  },
+  {
+    path: "/on-boarding",
+    element: (
+      <UserContextProvider>
+        <OnBoardingLayout></OnBoardingLayout>
+      </UserContextProvider>
+    ),
+    children: [
+      { index: true, element: <OnBoarding></OnBoarding> },
+      { path: "plan", element: <Plan></Plan> },
     ],
   },
   { path: "/*", element: <Navigate to="/" replace /> },

@@ -26,7 +26,7 @@ async function sendVerificationEmail(email, verificationToken) {
       category: "Integration Test",
     });
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
     throw new Error("Verification email wasnt send to the user");
   }
 }

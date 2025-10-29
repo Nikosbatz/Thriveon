@@ -15,6 +15,8 @@ export async function fetchWrapper(uri, options) {
     },
   };
 
+  console.log(uri);
+
   const res = await fetch(uri, authOptions);
 
   // if Server returns unauthorized status 401 then remove token and redirect to Login Page
@@ -22,8 +24,7 @@ export async function fetchWrapper(uri, options) {
     console.log("ERROR 401");
     localStorage.removeItem("token");
     window.location.href = "/auth/login";
-    return;
+    return res;
   }
-
   return res;
 }

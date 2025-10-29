@@ -7,6 +7,7 @@ export default function ExerciseTrackerCard() {
   const [userActivities, setUserActivities] = useState([]);
   const [showSucessMessage, setShowSucessMessage] = useState(false);
   const [fadeMessage, setFadeMessage] = useState(false);
+
   // Color Yellow code: #CBB001
 
   // ===== useEffect =====
@@ -52,6 +53,7 @@ export default function ExerciseTrackerCard() {
   );
 
   // ===== RETURN =====
+
   return (
     <div className="modal exercise-tracker-container">
       <h2>Track Your Exercise</h2>

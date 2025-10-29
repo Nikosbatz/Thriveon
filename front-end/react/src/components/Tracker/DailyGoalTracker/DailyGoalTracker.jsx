@@ -14,6 +14,7 @@ import {
 
 export default function DailyGoalTracker() {
   const { userProfile } = useContext(UserContext);
+  console.log(userProfile);
   const { todaysMacros } = useContext(FoodsContext);
   const { nutritionGoals } = userProfile;
 

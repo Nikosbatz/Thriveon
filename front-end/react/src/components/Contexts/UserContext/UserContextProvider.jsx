@@ -1,10 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserContext } from "./UserContext";
+import { postUserInfo, getUserInfo } from "../../../api/requests";
 
 export default function UserContextProvider({ children }) {
-  //TODO: After Login fetch User data with useEffect()
+  const [userProfile, setUserProfile] = useState(null);
 
-  const [userProfile, setUserProfile] = useState({
+  useEffect(() => {
+    async function requestUserInfo() {
+      try {
+        const user = await getUserInfo();
+        setUserProfile(user);
+        console.log(user);
+      } catch (error) {}
+    }
+
+    requestUserInfo();
+    return () => {};
+  }, []);
+
+  async function updateInfo(info) {
+    console.log(info);
+    const newUser = await postUserInfo(info);
+    setUserProfile(newUser);
+    console.log(newUser);
+    return;
+  }
+
+  return (
+    <UserContext.Provider value={{ userProfile, updateInfo }}>
+      {children}
+    </UserContext.Provider>
+  );
+}
+
+/* {
     firstName: "nikos",
     lastName: "batz",
     email: "nikos.mpatz@outlook.com",
@@ -25,11 +54,4 @@ export default function UserContextProvider({ children }) {
       water: "5",
       activity: "45",
     },
-  });
-
-  return (
-    <UserContext.Provider value={{ userProfile }}>
-      {children}
-    </UserContext.Provider>
-  );
-}
+  }*/

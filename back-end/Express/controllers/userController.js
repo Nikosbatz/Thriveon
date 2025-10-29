@@ -8,12 +8,15 @@ const {
   sendVerificationEmail,
   sendPasswordResetEmail,
   sendPasswordResetSuccessEmail,
+} = require("../brevoMail/brevoMail");
+const {
+  //sendVerificationEmail,
+  //sendPasswordResetEmail,
+  //sendPasswordResetSuccessEmail,
 } = require("../mailtrap/mail.js");
 
 async function createUser(req, res) {
   const userData = req.body;
-
-  console.log("CREATE USER");
 
   try {
     // Check if a user with userdata.email already exists
@@ -23,7 +26,6 @@ async function createUser(req, res) {
 
     // Hash the password
     const hashedPass = await bcrypt.hash(userData.password, 10);
-    console.log(hashedPass);
 
     const verificationToken = Math.floor(
       100000 + Math.random() * 900000
@@ -45,15 +47,21 @@ async function createUser(req, res) {
       nutritionlogs: [],
     });
 
-    const emailResult = await sendVerificationEmail(
-      userData.email,
-      verificationToken
-    );
+    try {
+      const emailResult = await sendVerificationEmail(
+        userData.email,
+        verificationToken
+      );
+    } catch (error) {
+      //catch the cannot send email error
+      console.log(error.message);
+    }
+
     const token = generateAccessToken(user._id);
 
     res.status(201).json({ accessToken: token });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     res.status(409).json({ message: "Error 409\nUser could not be created!" });
   }
 }
@@ -82,7 +90,7 @@ async function verifyUser(req, res) {
     // return OK status
     return res.status(200).send();
   } catch (error) {
-    console.log("ERROR! COULDNT VERIFY USER");
+    console.log(error.message);
     res.status(500).json({ message: "User couldnt be verified " });
   }
 }
@@ -99,12 +107,11 @@ async function loginUser(req, res) {
 
     // Check if given password and DB-password match
     const passMatch = await bcrypt.compare(userPass, user.password);
-    console.log(passMatch);
+
     if (!passMatch)
       return res.status(401).json({ message: "Invalid credentials" });
 
     const token = generateAccessToken(user._id);
-    console.log(token);
 
     res.status(200).json({ accessToken: token });
   } catch (error) {}
@@ -141,12 +148,8 @@ async function forgotPassword(req, res) {
 }
 
 async function resetPassword(req, res) {
-  console.log("RESET PASSWORD");
-
   const { token } = req.params;
   const { password } = req.body;
-
-  console.log(token);
 
   try {
     const user = await User.findOne({
@@ -163,7 +166,7 @@ async function resetPassword(req, res) {
     user.password = hashedPass;
     user.resetPasswordToken = undefined;
     user.resetPasswordTokenExpiresAt = undefined;
-    console.log(user.email);
+
     await user.save();
 
     await sendPasswordResetSuccessEmail(user.email);
@@ -173,6 +176,74 @@ async function resetPassword(req, res) {
     console.log("Error in resetPassword func: ", error);
     res.status(400).json({ message: error.message });
   }
+}
+
+async function getInfo(req, res) {
+  const userId = req.userId;
+
+  console.log(userId);
+
+  try {
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      return res.status(401).send();
+    }
+
+    console.log(user._doc);
+    res.status(200).json(user._doc);
+  } catch (error) {}
+}
+
+async function updateInfo(req, res) {
+  const userId = req.userId;
+  const body = req.body;
+
+  console.log(body);
+
+  body.onBoardingCompleted = true;
+  const allowedFields = [
+    "username",
+    "age",
+    "weight",
+    "height",
+    "country",
+    "goal",
+    "nutritionGoals",
+    "healthGoals",
+    "onBoardingCompleted",
+  ];
+
+  try {
+    // filter body and keep only the allowedFields keys, then reduce the filtered keys in a new object {filtered_key: value}
+    const updates = Object.keys(body)
+      .filter((key) => allowedFields.includes(key))
+      .reduce((obj, key) => {
+        obj[key] = req.body[key];
+        return obj;
+      }, {});
+
+    const user = await User.findByIdAndUpdate(
+      { _id: userId },
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found!" });
+    }
+
+    const { password, ...safeUser } = user._doc;
+    console.log(safeUser);
+    res.status(200).json({ ...safeUser });
+  } catch (error) {
+    res.status(500).send();
+  }
+}
+
+// authMiddleware is used before this function
+async function authToken(req, res) {
+  res.status(200).send();
 }
 
 function generateAccessToken(userId) {
@@ -185,4 +256,7 @@ module.exports = {
   forgotPassword,
   verifyUser,
   resetPassword,
+  updateInfo,
+  authToken,
+  getInfo,
 };

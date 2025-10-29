@@ -227,6 +227,11 @@ body {
   width: 100%;
   height: 100%;
   padding: 2em;
+  overflow-y: hidden;
+}
+
+.tracker-panel > * {
+  animation: fade-in-forgot-password 0.6s ease-in-out;
 }
 
 /* ------ TRACKER-PANEL BREAKPOINTS ------ */
@@ -1519,7 +1524,13 @@ body {
   grid-template-rows: 1fr 1fr 1fr;
   gap: 1em;
   max-width: 100vw;
+  overflow-y: hidden;
 }
+
+.dashboard > * {
+  animation: fade-in-forgot-password 0.6s ease-in-out;
+}
+
 .dashboard .carousel-container {
   position: relative;
 }
@@ -2920,13 +2931,13 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.2em;
-  padding: 5px;
   font-size: 1.1em;
   border: 1px solid var(--cyborg-green);
   border-radius: 6px;
   font-weight: 600;
   font-family: "quicksand";
   width: 12em;
+  height: 2em;
   margin: 0.5em;
   background-color: var(--cyborg-black);
   color: white;
@@ -2938,6 +2949,13 @@ body {
 .on-boarding-container .submit_btn:hover {
   background-color: var(--cyborg-green);
   color: var(--cyborg-black);
+}
+
+.on-boarding-container .loader2 {
+  height: 2em;
+  margin: 0.5em;
+  font-size: 1.1em;
+  border-color: var(--cyborg-green);
 }
 
 .plan-container {
@@ -3018,6 +3036,21 @@ body {
   font-size: 0.9em;
 }
 
+.verify-email-container a {
+  display: flex;
+  align-self: center;
+  font-family: "quicksand";
+  color: rgb(185, 185, 185);
+  border-bottom: 1px solid transparent;
+  text-decoration: none;
+  margin: 0;
+  transition: all 0.2s ease-in-out;
+}
+.verify-email-container a:hover {
+  border-bottom: 1px solid rgb(234, 234, 234);
+  color: rgb(234, 234, 234);
+}
+
 .verify-email-form {
   display: flex;
   flex-direction: column;
@@ -3073,6 +3106,9 @@ body {
   0% {
     opacity: 0%;
     transform: translate(0, 50%);
+  }
+  100% {
+    opacity: 1;
   }
 }
 
@@ -3338,6 +3374,107 @@ body {
 /* ------ RESET-PASSWORD BREAKPOINTS ------ */
 /* ------ END ------ */
 
+/* ------ LOADING-COMPONENT  ------ */
+
+.main-layout.loading-component {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-layout.loading-component .loader2 {
+  width: 80px;
+  height: 80px;
+}
+
+.main-layout.loading-component .loader2::after {
+  width: 100px;
+  height: 100px;
+}
+/* ------ LOADING-COMPONENT BREAKPOINTS ------ */
+/* ------ END ------ */
+
+/* ------ DASHBOARD-CARD-SKELETON ------ */
+.skeleton {
+  height: 100%;
+  width: 100%;
+}
+.skeleton .card {
+  height: 100%;
+  --card: linear-gradient(to bottom, #0b1017 100%, transparent 0%);
+  --card-height: 100%;
+
+  --avatar: radial-gradient(
+    circle 40px at center,
+    #103043 100%,
+    transparent 0%
+  );
+  --avatar-size: 80px;
+  --avatar-position: 24px 24px;
+
+  --title: linear-gradient(to right, #061f3c 100%, transparent 0%);
+  --title-height: 28px;
+  --title-width: 160px;
+  --title-position: 24px 120px;
+
+  --subtitle: linear-gradient(to right, #061f3c 100%, transparent 0%);
+  --subtitle-height: 16px;
+  --subtitle-width: 200px;
+  --subtitle-position: 24px 160px;
+
+  --button: linear-gradient(to bottom, #061f3c 100%, transparent 0%);
+  --button-height: 40px;
+  --button-1-width: 90px;
+  --button-1-position: 24px 260px;
+  --button-2-width: 90px;
+  --button-2-position: 124px 260px;
+
+  --blur-width: 200px;
+  --blur-size: var(--blur-width) var(--card-height);
+}
+.skeleton .card::after {
+  content: "";
+  display: block;
+  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  transition: all 0.6s ease;
+  background-image: linear-gradient(
+      90deg,
+      rgba(79, 79, 79, 0) 0%,
+      rgba(34, 42, 60, 0.8) 50%,
+      rgba(51, 51, 51, 0) 100%
+    ),
+    var(--avatar), var(--title), var(--subtitle), var(--button), var(--button),
+    var(--card);
+
+  background-size: var(--blur-size), var(--avatar-size) var(--avatar-size),
+    var(--title-width) var(--title-height),
+    var(--subtitle-width) var(--subtitle-height),
+    var(--button-1-width) var(--button-height),
+    var(--button-2-width) var(--button-height), 100% 100%;
+
+  background-position: -150% 0, var(--avatar-position), var(--title-position),
+    var(--subtitle-position), var(--button-1-position), var(--button-2-position),
+    0 0;
+
+  background-repeat: no-repeat;
+  animation: loading 1.9s infinite linear;
+}
+
+@keyframes loading {
+  to {
+    background-position: 350% 0, var(--avatar-position), var(--title-position),
+      var(--subtitle-position), var(--button-1-position),
+      var(--button-2-position), 0 0;
+  }
+}
+/* ------ DASHBOARD-CARD-SKELETON BREAKPOINTS ------ */
+
+/* ------ END ------ */
+
 .footer {
   color: white;
   width: 100%;
@@ -3362,7 +3499,7 @@ body {
 /* HTML: <div class="loader"></div> */
 .loader {
   width: 50px;
-  padding: 8px;
+  padding: 7px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: rgb(72, 31, 31);
@@ -3381,7 +3518,7 @@ body {
 
 .loader2 {
   width: 32px;
-  height: 25px;
+  height: 32px;
   border: 3px solid #02322c;
   border-radius: 50%;
   display: inline-block;

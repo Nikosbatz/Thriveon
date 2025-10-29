@@ -22,16 +22,16 @@ export default function Personalinfo() {
         id="avatar-img"
         src={userProfile.avatar ? userProfile.avatar : "/assets/darth-maul.svg"}
       ></img>
-      <h2>{userProfile.firstName + " " + userProfile.lastName}</h2>
+      {/*<h2>{userProfile.firstName + " " + userProfile.lastName}</h2>*/}
       {/*TODO: PREPEI NA ALLAXEI TO "dl" se "form" */}
       <dl>
-        <div className={disabledInputs ? "info-pair" : "info-pair active"}>
+        {/*<div className={disabledInputs ? "info-pair" : "info-pair active"}>
           <span>Name:</span>
           <input
             disabled={disabledInputs}
             value={userProfile.firstName + " " + userProfile.lastName}
           ></input>
-        </div>
+        </div>*/}
         <div className={disabledInputs ? "info-pair" : "info-pair active"}>
           <span>E-mail:</span>
           <input disabled={disabledInputs} value={userProfile.email}></input>

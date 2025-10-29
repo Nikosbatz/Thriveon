@@ -6,6 +6,8 @@ export default function PersonalGoals() {
   /*const userProfile = useOutletContext();*/
   const { userProfile } = useContext(UserContext);
   const [disabledInputs, setdisabledInputs] = useState(true);
+
+  const goals = ["Lose Weight", "Gain Mass", "Maintain Weight"];
   return (
     <div className="personal-goals">
       <button
@@ -55,7 +57,10 @@ export default function PersonalGoals() {
         <img src="/assets/heart-red.svg" alt="" />
         <div className={disabledInputs ? "info-pair" : "info-pair active"}>
           <span>Main Goal:</span>
-          <input disabled={disabledInputs} value={userProfile.goal}></input>
+          <input
+            disabled={disabledInputs}
+            value={goals[userProfile.goal]}
+          ></input>
         </div>
         <div className={disabledInputs ? "info-pair" : "info-pair active"}>
           <span>Weight Goal:</span>

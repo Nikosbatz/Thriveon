@@ -45,7 +45,8 @@ export async function register(email, password) {
 
   const res = await fetch(`${BASE_URI}/user/register`, options);
 
-  if (res.status === 201) {
+  // If status === created successfully || status === bad gateway (Could not send verification email) then save token
+  if (res.status === 201 || res.status === 502) {
     const data = await res.json();
     data.accessToken
       ? localStorage.setItem("token", data.accessToken)
@@ -122,6 +123,43 @@ export async function postResetPassword(password, token) {
   } else if (res.status === 400) {
     console.log("asdadas");
     throw new Error("Invalid password reset token.");
+  }
+}
+
+export async function postUserInfo(info) {
+  const options = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json;charset=UTF-8",
+    },
+    body: JSON.stringify(info),
+  };
+  const res = await fetchWrapper(`${BASE_URI}/user/update-info`, options);
+
+  if (res.status === 200) {
+    return await res.json();
+  } else {
+    throw new Error(
+      "Something went wrong. If the error persists please contact support"
+    );
+  }
+}
+
+export async function getUserInfo() {
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  };
+
+  const res = await fetchWrapper(`${BASE_URI}/user/info`, options);
+
+  if (res.status === 200) {
+    return await res.json();
+  } else {
+    throw new Error("User not Found!");
   }
 }
 
