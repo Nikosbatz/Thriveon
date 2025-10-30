@@ -7,7 +7,6 @@ export default function PersonalGoals() {
   const { userProfile } = useContext(UserContext);
   const [disabledInputs, setdisabledInputs] = useState(true);
 
-  const goals = ["Lose Weight", "Gain Mass", "Maintain Weight"];
   return (
     <div className="personal-goals">
       <button
@@ -22,61 +21,55 @@ export default function PersonalGoals() {
       <div className="nutrition-goals-container flex-item">
         <h2>Nutrition Goals:</h2>
         <img src="/assets/broccoli.svg" alt="" />
-
-        <div className={disabledInputs ? "info-pair" : "info-pair active"}>
-          <span>Daily Calories:</span>
-          <input
-            disabled={disabledInputs}
-            value={userProfile.nutritionGoals.calories + " kcal"}
-          ></input>
-        </div>
-        <div className={disabledInputs ? "info-pair" : "info-pair active"}>
-          <span>Daily Protein:</span>
-          <input
-            disabled={disabledInputs}
-            value={userProfile.nutritionGoals.protein + " G"}
-          ></input>
-        </div>
-        <div className={disabledInputs ? "info-pair" : "info-pair active"}>
-          <span>Daily Carbs:</span>
-          <input
-            disabled={disabledInputs}
-            value={userProfile.nutritionGoals.carbs + " G"}
-          ></input>
-        </div>
-        <div className={disabledInputs ? "info-pair" : "info-pair active"}>
-          <span>Daily Fats:</span>
-          <input
-            disabled={disabledInputs}
-            value={userProfile.nutritionGoals.fats + " G"}
-          ></input>
-        </div>
+        {/* Render Nutrition Goals with map() */}
+        {nutritionFields.map(({ label, key, unit }) => (
+          <div
+            key={key}
+            className={disabledInputs ? "info-pair" : "info-pair active"}
+          >
+            <span>{label}:</span>
+            <input
+              disabled={disabledInputs}
+              value={`${userProfile.nutritionGoals[key]} ${unit}`}
+            />
+          </div>
+        ))}
       </div>
       <div className="health-goals-container flex-item">
         <h2>Health Goals:</h2>
         <img src="/assets/heart-red.svg" alt="" />
-        <div className={disabledInputs ? "info-pair" : "info-pair active"}>
-          <span>Main Goal:</span>
-          <input
-            disabled={disabledInputs}
-            value={goals[userProfile.goal]}
-          ></input>
-        </div>
-        <div className={disabledInputs ? "info-pair" : "info-pair active"}>
-          <span>Weight Goal:</span>
-          <input
-            disabled={disabledInputs}
-            value={userProfile.healthGoals.weight + " Kgs"}
-          ></input>
-        </div>
-        <div className={disabledInputs ? "info-pair" : "info-pair active"}>
-          <span>Daily Water Intake:</span>
-          <input
-            disabled={disabledInputs}
-            value={userProfile.healthGoals.water + " Liters"}
-          ></input>
-        </div>
+        {/* Render Health Goals with map() */}
+        {healthFields.map(({ label, value }) => (
+          <div
+            key={label}
+            className={disabledInputs ? "info-pair" : "info-pair active"}
+          >
+            <span>{label}:</span>
+            <input disabled={disabledInputs} value={value(userProfile)} />
+          </div>
+        ))}
       </div>
     </div>
   );
 }
+
+const goals = ["Lose Weight", "Gain Mass", "Maintain Weight"];
+
+const nutritionFields = [
+  { label: "Daily Calories", key: "calories", unit: "kcal" },
+  { label: "Daily Protein", key: "protein", unit: "G" },
+  { label: "Daily Carbs", key: "carbs", unit: "G" },
+  { label: "Daily Fats", key: "fats", unit: "G" },
+];
+
+const healthFields = [
+  { label: "Main Goal", value: (userProfile) => goals[userProfile.goal] },
+  {
+    label: "Weight Goal",
+    value: (userProfile) => `${userProfile.healthGoals.weight} Kgs`,
+  },
+  {
+    label: "Daily Water Intake",
+    value: (userProfile) => `${userProfile.healthGoals.water} Liters`,
+  },
+];

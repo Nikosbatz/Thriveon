@@ -39,6 +39,7 @@ export async function sendVerificationEmail(userEmail, verificationToken) {
 }
 
 export async function sendPasswordResetEmail(userEmail, resetToken) {
+  console.log("SEND PASSWORD RESET EMAIL");
   let emailAPI = new TransactionalEmailsApi();
   emailAPI.authentications.apiKey.apiKey = process.env.BREVO_API_TOKEN;
 

@@ -11,7 +11,7 @@ export default function ForgotPassword() {
     e.preventDefault();
     setIsSubmitted(true);
     try {
-      await postForgotPasswordEmail(emailInput);
+      await postForgotPasswordEmail(emailInput.toLowerCase());
     } catch (error) {}
   }
   return (

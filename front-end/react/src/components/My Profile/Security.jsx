@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useOutletContext } from "react-router-dom";
+import { UserContext } from "../Contexts/UserContext/UserContext";
 
 export default function Security() {
-  const userProfile = useOutletContext();
+  const { userProfile } = useContext(UserContext);
   const [disabledInputs, setdisabledInputs] = useState(true);
   return (
     <div className="security-container">
@@ -22,11 +23,14 @@ export default function Security() {
       <div className="security-settings">
         <div className={disabledInputs ? "info-pair" : "info-pair active"}>
           <span>Mobile Number</span>
-          <input disabled={disabledInputs} value={"6975981902"}></input>
+          <input
+            disabled={disabledInputs}
+            value={userProfile.phoneNumber}
+          ></input>
         </div>
         <div className={disabledInputs ? "info-pair" : "info-pair active"}>
           <span>Multi Factor Authentication</span>
-          <input disabled={disabledInputs} value={"Disabled"}></input>
+          <input disabled={disabledInputs} value={userProfile.mfa}></input>
         </div>
       </div>
     </div>

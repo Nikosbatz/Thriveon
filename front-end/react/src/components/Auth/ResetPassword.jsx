@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Lock } from "lucide-react";
+import { Lock, Eye, EyeOff } from "lucide-react";
 import { postResetPassword } from "../../api/requests";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -55,15 +55,17 @@ export default function ResetPassword() {
             value={passwordInput}
             onChange={(e) => setPasswordInput(e.target.value)}
           />
-          <img
-            onClick={() => setshowPassword((prev) => !prev)}
-            src={
-              showPassword
-                ? "/assets/eye_open_white.svg"
-                : "/assets/eye_closed_white.svg"
-            }
-            alt=""
-          />
+          {showPassword ? (
+            <Eye
+              className="eye-icon"
+              onClick={() => setshowPassword((prev) => !prev)}
+            ></Eye>
+          ) : (
+            <EyeOff
+              className="eye-icon"
+              onClick={() => setshowPassword((prev) => !prev)}
+            ></EyeOff>
+          )}
           <div
             className="hint"
             style={{
@@ -81,15 +83,17 @@ export default function ResetPassword() {
             value={confirmPasswordInput}
             onChange={(e) => setconfirmPasswordInput(e.target.value)}
           />
-          <img
-            onClick={() => setshowPassword((prev) => !prev)}
-            src={
-              showPassword
-                ? "/assets/eye_open_white.svg"
-                : "/assets/eye_closed_white.svg"
-            }
-            alt=""
-          />
+          {showPassword ? (
+            <Eye
+              className="eye-icon"
+              onClick={() => setshowPassword((prev) => !prev)}
+            ></Eye>
+          ) : (
+            <EyeOff
+              className="eye-icon"
+              onClick={() => setshowPassword((prev) => !prev)}
+            ></EyeOff>
+          )}
           <div
             className="hint"
             style={{

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { login, register } from "../../api/requests";
 import { useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
@@ -94,15 +95,17 @@ export default function Login() {
                 }
               />
 
-              <img
-                onClick={() => setshowPassword((prev) => !prev)}
-                src={
-                  showPassword
-                    ? "../assets/eye_open_white.svg"
-                    : "../assets/eye_closed_white.svg"
-                }
-                alt=""
-              />
+              {showPassword ? (
+                <Eye
+                  className="eye-icon"
+                  onClick={() => setshowPassword((prev) => !prev)}
+                ></Eye>
+              ) : (
+                <EyeOff
+                  className="eye-icon"
+                  onClick={() => setshowPassword((prev) => !prev)}
+                ></EyeOff>
+              )}
             </div>
 
             <Link to={"../forgot-password"} className="forgot-password">
@@ -178,15 +181,17 @@ export default function Login() {
               >
                 At least 8 characters
               </div>
-              <img
-                onClick={() => setshowPassword((prev) => !prev)}
-                src={
-                  showPassword
-                    ? "../assets/eye_open_white.svg"
-                    : "../assets/eye_closed_white.svg"
-                }
-                alt=""
-              />
+              {showPassword ? (
+                <Eye
+                  className="eye-icon"
+                  onClick={() => setshowPassword((prev) => !prev)}
+                ></Eye>
+              ) : (
+                <EyeOff
+                  className="eye-icon"
+                  onClick={() => setshowPassword((prev) => !prev)}
+                ></EyeOff>
+              )}
             </div>
             <div className="input-pair">
               <label htmlFor="confirm-password">Confirm Password:</label>
@@ -202,15 +207,17 @@ export default function Login() {
                   }))
                 }
               />
-              <img
-                onClick={() => setshowPassword((prev) => !prev)}
-                src={
-                  showPassword
-                    ? "../assets/eye_open_white.svg"
-                    : "../assets/eye_closed_white.svg"
-                }
-                alt=""
-              />
+              {showPassword ? (
+                <Eye
+                  className="eye-icon"
+                  onClick={() => setshowPassword((prev) => !prev)}
+                ></Eye>
+              ) : (
+                <EyeOff
+                  className="eye-icon"
+                  onClick={() => setshowPassword((prev) => !prev)}
+                ></EyeOff>
+              )}
               <div
                 className="hint"
                 style={{

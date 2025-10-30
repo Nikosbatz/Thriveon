@@ -120,6 +120,8 @@ async function loginUser(req, res) {
 async function forgotPassword(req, res) {
   const { email } = req.body;
 
+  console.log("FORGORT PASSWORD");
+
   try {
     // Find User by Email
     const user = await User.findOne({ email: email });

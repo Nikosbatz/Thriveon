@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   height: { type: Number, default: null },
   country: { type: String, default: "" },
   goal: { type: String, default: "" },
+  mfa: { type: Boolean, default: false },
   nutritionGoals: {
     calories: Number,
     protein: Number,

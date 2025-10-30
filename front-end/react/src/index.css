@@ -2659,17 +2659,18 @@ body {
   box-shadow: 0px 0px 5px rgb(0, 2, 24);
 }
 
-.login-form .input-pair img {
+.login-form .input-pair .eye-icon {
   width: 1.2em;
   height: 1.2em;
   position: absolute;
   top: 50%;
   right: 3%;
   cursor: pointer;
+  color: white;
   transition: transform 0.2s ease;
 }
 
-.login-form .input-pair img:hover {
+.login-form .input-pair .eye-icon:hover {
   transform: scale(1.2);
 }
 
@@ -3320,16 +3321,17 @@ body {
   color: white;
 }
 
-.reset-password-container .input-container img {
+.reset-password-container .input-container .eye-icon {
   width: 1.2em;
   height: 1.2em;
   position: absolute;
   right: 3%;
   cursor: pointer;
+  color: white;
   transition: transform 0.2s ease;
 }
 
-.reset-password-container .input-container img:hover {
+.reset-password-container .input-container .eye-icon:hover {
   transform: scale(1.2);
 }
 
