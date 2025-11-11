@@ -23,10 +23,10 @@ export default function CaloriePieChart({}) {
               ? [{ name: "Add Foods To Show Kcal", value: 1 }]
               : mealCalories
           }
-          cx="40%"
+          cx="55%"
           cy="50%"
-          innerRadius="55%"
-          outerRadius="80%"
+          innerRadius="50%"
+          outerRadius="75%"
           fill="#8884d8"
           paddingAngle={5}
           dataKey="value"

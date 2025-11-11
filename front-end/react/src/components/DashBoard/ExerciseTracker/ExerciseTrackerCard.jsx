@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import AddActivityModal from "./AddActivityModal";
 import { getUserActivities } from "../../../api/requests";
+import { Flame, Timer } from "lucide-react";
 
 export default function ExerciseTrackerCard() {
   const [addActivityClicked, setAddActivityClicked] = useState(false);
@@ -52,57 +53,68 @@ export default function ExerciseTrackerCard() {
     0
   );
 
+  const durationPercentage = Math.floor((totalDuration / 60) * 100);
+  const caloriesPercentage = Math.floor((totalCalories / 400) * 100);
+
+  //console.log(durationPercentage + " : " + caloriesPercentage);
+  console.log(totalCalories + " : " + totalDuration);
+
   // ===== RETURN =====
 
   return (
     <div className="modal exercise-tracker-container">
-      <h2>Track Your Exercise</h2>
-      <div className="inner-card">
-        {/*<img src="./assets/gym_orange.svg" alt="" />*/}
-
-        <div className="modal exercise-flex-item today-exercise-card">
-          <h3>Exercise</h3>
-          <div className="flex-item">
-            <img src="./assets/fire.svg"></img>
-            <span>{totalCalories} kcal</span>
-          </div>
-          <div className="flex-item">
-            <img src="./assets/clock_blue.svg" alt="" />
-            <span>{totalDuration} mins</span>
-          </div>
-        </div>
-        <div className="modal exercise-flex-item streak-card">
-          <h3>Streak</h3>
-          <div className="flex-container">
-            <div className="image-container">
-              <img src="./assets/lightning_blue_white.svg" alt="" />
+      <h2>Activity stats</h2>
+      <div className="item">
+        <div className="flex-row-container">
+          <Flame></Flame>
+          <div className="progress-bar-container">
+            <div className="flex-row-container">
+              <h3>Calories Burned</h3>
+              <span>{totalCalories}/400</span>
             </div>
-            <div className="streak-badge">
-              <span>1</span> Day Streak!
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                style={{ width: `${caloriesPercentage}%` }}
+              ></div>
             </div>
           </div>
-          <span className="streak-hint">Keep Going!</span>
-        </div>
-        <div
-          onClick={() => {
-            setAddActivityClicked(!addActivityClicked);
-          }}
-          className={
-            addActivityClicked
-              ? "modal exercise-flex-item add-activity clicked"
-              : "modal exercise-flex-item add-activity"
-          }
-        >
-          <img className="background-img" src="./assets/223.jpg" alt="" />
-          <img className="add-img" src="./assets/add_test.svg" alt="" />
-          <h3>Add activity</h3>
         </div>
       </div>
-      <AddActivityModal
-        addActivityClicked={addActivityClicked}
-        setAddActivityClicked={setAddActivityClicked}
-        handleSuccessMessage={handleSuccessMessage}
-      ></AddActivityModal>
+      <div className="item">
+        <div className="flex-row-container">
+          <Timer />
+          <div className="progress-bar-container">
+            <div className="flex-row-container">
+              <h3>Active Minutes</h3>
+              <span>{totalDuration}/60</span>
+            </div>
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                style={{ width: `${durationPercentage}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <img
+        onClick={() => setAddActivityClicked((prev) => !prev)}
+        src="../assets/add_test.svg"
+        alt=""
+      />
+      <div
+        className={
+          addActivityClicked ? "dialog-overlay active" : "dialog-overlay"
+        }
+      >
+        <AddActivityModal
+          addActivityClicked={addActivityClicked}
+          setAddActivityClicked={setAddActivityClicked}
+          handleSuccessMessage={handleSuccessMessage}
+        ></AddActivityModal>
+      </div>
       {showSucessMessage ? (
         <div
           className={

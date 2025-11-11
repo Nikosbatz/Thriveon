@@ -11,10 +11,10 @@ import {
   Tooltip,
   PolarAngleAxis,
 } from "recharts";
+import { Beef, Wheat, Droplets } from "lucide-react";
 
 export default function DailyGoalTracker() {
   const { userProfile } = useContext(UserContext);
-  console.log(userProfile);
   const { todaysMacros } = useContext(FoodsContext);
   const { nutritionGoals } = userProfile;
 
@@ -46,17 +46,15 @@ export default function DailyGoalTracker() {
   }));
 
   return (
-    <div className="daily-goal-tracker modal">
-      <h2>Daily goal percentages</h2>
-
-      <div className="daily-goal-tracker-charts">
+    <div className="daily-goal-tracker ">
+      <div className="chart-container modal">
         <RadialBarChart
           width={100}
           height={100}
           cx={47}
           cy={50}
-          innerRadius="60%"
-          outerRadius="110%"
+          innerRadius="50%"
+          outerRadius="100%"
           startAngle={70}
           endAngle={-270}
           data={[data[0]]}
@@ -82,6 +80,15 @@ export default function DailyGoalTracker() {
             align="center"
           />
         </RadialBarChart>
+        <p>
+          protein<br></br>
+          <span>
+            {data[0].value} / {data[0].goal} g
+          </span>
+        </p>
+        <Beef className="lucide-icon"></Beef>
+      </div>
+      <div className="chart-container modal">
         <RadialBarChart
           width={100}
           height={100}
@@ -115,6 +122,15 @@ export default function DailyGoalTracker() {
             align="center"
           />
         </RadialBarChart>
+        <p>
+          carbs<br></br>
+          <span>
+            {data[1].value} / {data[1].goal} g
+          </span>
+        </p>
+        <Wheat className="lucide-icon"></Wheat>
+      </div>
+      <div className="chart-container modal">
         <RadialBarChart
           width={100}
           height={100}
@@ -148,6 +164,13 @@ export default function DailyGoalTracker() {
             align="center"
           />
         </RadialBarChart>
+        <p>
+          fats<br></br>
+          <span>
+            {data[2].value} / {data[2].goal} g
+          </span>
+        </p>
+        <Droplets className="lucide-icon"></Droplets>
       </div>
     </div>
   );

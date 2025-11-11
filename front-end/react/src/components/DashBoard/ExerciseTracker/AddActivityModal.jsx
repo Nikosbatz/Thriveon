@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { useClickOutside } from "../../useClickOutside";
 import { postUserActivity } from "../../../api/requests";
+import { RemoveScroll } from "react-remove-scroll";
+import { X } from "lucide-react";
 
 export default function AddActivityModal({
   addActivityClicked,
@@ -66,98 +68,99 @@ export default function AddActivityModal({
     }
   }
 
-  return (
-    <div
-      className={
-        addActivityClicked ? "add-activity-modal active" : "add-activity-modal"
-      }
-    >
-      <img
-        onClick={() => setAddActivityClicked(false)}
-        className="cancel_img"
-        src="./assets/cancel_red.svg"
-        alt=""
-      />
-      <form className="add-activity-form">
-        {/* Activity Input + DropDown */}
-        <div ref={dropdownRef} className="activity-input-container">
-          <h4>Activity:</h4>
-          <span
-            onClick={() => setActivitySelected(!activitySelected)}
-            className={activitySelected ? "selection active" : "selection"}
+  if (!addActivityClicked) {
+    return null;
+  } else
+    return (
+      <RemoveScroll forwardProps removeScrollBar={false}>
+        <div className="add-activity-dialog modal">
+          <button
+            className="cross-button"
+            onClick={() => setAddActivityClicked((prev) => !prev)}
           >
-            {activityValues.activityType}
-            <img src="./assets/arrow_down_white.svg"></img>
-          </span>
-          <div className="dropdown-container">
-            <ul
-              onClick={() => setActivitySelected(!activitySelected)}
-              className={activitySelected ? "dropdown active" : "dropdown"}
-            >
-              {activityTypes.map((activity) => (
-                <li
-                  onClick={() =>
+            <X></X>
+          </button>
+          <form className="add-activity-form">
+            <h2>Log Activity</h2>
+            <span>Record your exercise and activity for today</span>
+            {/* Activity Input + DropDown */}
+            <div ref={dropdownRef} className="activity-input-container">
+              <h4>Activity:</h4>
+              <span
+                onClick={() => setActivitySelected(!activitySelected)}
+                className={activitySelected ? "selection active" : "selection"}
+              >
+                {activityValues.activityType}
+                <img src="./assets/arrow_down_white.svg"></img>
+              </span>
+              <div className="dropdown-container">
+                <ul
+                  onClick={() => setActivitySelected(!activitySelected)}
+                  className={activitySelected ? "dropdown active" : "dropdown"}
+                >
+                  {activityTypes.map((activity) => (
+                    <li
+                      onClick={() =>
+                        setActivityValues((prev) => ({
+                          ...prev,
+                          activityType: activity,
+                        }))
+                      }
+                    >
+                      {activity}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            {/* Exercise Time */}
+            <div className="activity-time-container">
+              <h4>Exercise Time:</h4>
+              <div className="activity-time-input-container">
+                <input
+                  type="number"
+                  placeholder="mins"
+                  value={activityValues.duration}
+                  onChange={(e) =>
                     setActivityValues((prev) => ({
                       ...prev,
-                      activityType: activity,
+                      duration: e.target.value,
                     }))
                   }
-                >
-                  {activity}
-                </li>
-              ))}
-            </ul>
-          </div>
+                />
+              </div>
+            </div>
+            {/* Calories Input */}
+            <div className="activity-calories-container">
+              <h4>Calories Burned:</h4>
+              <div className="activity-calories-input-container">
+                <input
+                  type="number"
+                  placeholder="kcal"
+                  value={activityValues.calories}
+                  onChange={(e) =>
+                    setActivityValues((prev) => ({
+                      ...prev,
+                      calories: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+            {/* Submit Button */}
+            {fetchingData ? (
+              <div className="loader"></div>
+            ) : (
+              <button
+                type="button"
+                className="submit_btn"
+                onClick={() => handleAddActivity()}
+              >
+                Save
+              </button>
+            )}
+          </form>
         </div>
-        {/* Exercise Time */}
-        <div className="activity-time-container">
-          <h4>Exercise Time:</h4>
-          <div className="activity-time-input-container">
-            <img src="./assets/clock_yellow.svg" alt="" />
-            <input
-              type="number"
-              placeholder="mins"
-              value={activityValues.duration}
-              onChange={(e) =>
-                setActivityValues((prev) => ({
-                  ...prev,
-                  duration: e.target.value,
-                }))
-              }
-            />
-          </div>
-        </div>
-        {/* Calories Input */}
-        <div className="activity-calories-container">
-          <h4>Calories Burned:</h4>
-          <div className="activity-calories-input-container">
-            <img src="./assets/fire.svg" alt="" />
-            <input
-              type="number"
-              placeholder="kcal"
-              value={activityValues.calories}
-              onChange={(e) =>
-                setActivityValues((prev) => ({
-                  ...prev,
-                  calories: e.target.value,
-                }))
-              }
-            />
-          </div>
-        </div>
-        {/* Submit Button */}
-        {fetchingData ? (
-          <div className="loader"></div>
-        ) : (
-          <button
-            type="button"
-            className="submit_btn"
-            onClick={() => handleAddActivity()}
-          >
-            Save
-          </button>
-        )}
-      </form>
-    </div>
-  );
+      </RemoveScroll>
+    );
 }

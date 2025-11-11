@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  LayoutDashboard,
+  SquarePlus,
+  CircleUserRound,
+  Activity,
+} from "lucide-react";
 
 export default function Header({ location }) {
   const [searchSelected, setSearchSelected] = useState(false);
@@ -19,8 +25,15 @@ export default function Header({ location }) {
 
   return (
     <header id="header" className={searchSelected ? "dark" : null}>
-      <img id="logo" src="/assets/logo-apple.png" alt="logo" />
-
+      <div className="logo-container">
+        <Activity></Activity>
+        <div>
+          <h2>NutriTrack</h2>
+          <p>Track your wellness journey</p>
+        </div>
+      </div>
+      <div className="spacer"></div>
+      {/* Hamburger Menu (Only Visible in Mobile Devices) */}
       <button
         onClick={() => setHamburgerMenuActive((prev) => !prev)}
         className="hamburger-nav-btn"
@@ -46,27 +59,33 @@ export default function Header({ location }) {
           />
         </svg>{" "}
       </button>
+      {/* ======== END ========*/}
+
       <nav className={hamburgerMenuActive ? "header-nav active" : "header-nav"}>
         {menuOptions.map((option) => (
           <Link
             onClick={handleLinkClick}
-            className={location.pathname === option.link ? "active" : null}
+            className={
+              location.pathname.includes(option.link) ? "active" : null
+            }
             to={option.link}
           >
+            {option.iconElement}
             {option.name}
           </Link>
         ))}
+
+        <div className="log-out" onClick={handleLogOut}>
+          <img src="/assets/log-out-white.svg" alt="" />
+          <span>Log out</span>
+        </div>
 
         <div className="log-out-in-nav" onClick={handleLogOut}>
           <img src="/assets/log-out-white.svg" alt="" />
           <span>Log out</span>
         </div>
       </nav>
-      <div className="spacer"></div>
-      <div className="log-out" onClick={handleLogOut}>
-        <img src="/assets/log-out-white.svg" alt="" />
-        <span>Log out</span>
-      </div>
+
       {/*<SearchForm
         searchSelected={searchSelected}
         setSearchSelected={setSearchSelected}
@@ -77,9 +96,16 @@ export default function Header({ location }) {
 }
 
 const menuOptions = [
-  { name: "DashBoard", link: "/dashboard" },
-  { name: "Today's Calories", link: "/calorie-tracker" },
-  { name: "Calorie History", link: "/calorie-history" },
-  { name: "Add New Food", link: "/add-food" },
-  { name: "My Profile", link: "/my-profile" },
+  {
+    name: "DashBoard",
+    link: "dashboard",
+    iconElement: <LayoutDashboard></LayoutDashboard>,
+  },
+  //{ name: "Calorie History", link: "/calorie-history" },
+  //{ name: "Add New Food", link: "/add-food" },
+  {
+    name: "Profile",
+    link: "my-profile",
+    iconElement: <CircleUserRound></CircleUserRound>,
+  },
 ];

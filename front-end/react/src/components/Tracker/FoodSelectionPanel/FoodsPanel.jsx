@@ -1,11 +1,12 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import FoodInfoCard from "./FoodInfoCard";
-import { useContext } from "react";
 import { FoodsContext } from "../../Contexts/FoodContext/FoodsContext";
 import { useClickOutside } from "../../useClickOutside";
+import { CirclePlus, CircleCheckBig } from "lucide-react";
 
-export default function FoodsPanel({ mealTypeSelected }) {
-  const { foods, handleAddFood } = useContext(FoodsContext);
+export default function FoodsPanel({ mealTypeSelected, filteredFoods }) {
+  const { handleAddFood } = useContext(FoodsContext);
+
   const foodCardInputRef = useRef(null);
   const [selectedFood, setSelectedFood] = useState(null);
   const [gramsQuantity, setGramsQuantity] = useState("");
@@ -16,6 +17,14 @@ export default function FoodsPanel({ mealTypeSelected }) {
   });
   const [foodsLoading, setfoodsLoading] = useState(true);
 
+  // useEffect to auto-focus clicked element input
+  useEffect(() => {
+    if (selectedFood && foodCardInputRef.current) {
+      console.log(foodCardInputRef.current.querySelector("input").focus());
+      foodCardInputRef.current.focus();
+    }
+  }, [selectedFood]);
+
   useClickOutside(foodCardInputRef, () => {
     setSelectedFood(null);
     setFoodCardInput("");
@@ -23,6 +32,7 @@ export default function FoodsPanel({ mealTypeSelected }) {
 
   function handleFoodAddition(e, foodObj) {
     //console.log(foodObj);
+    e.stopPropagation();
 
     handleAddFood(foodObj, Number(foodCardInput), mealTypeSelected);
     setSelectedFood(null);
@@ -54,28 +64,35 @@ export default function FoodsPanel({ mealTypeSelected }) {
   }
 
   // Open the foodCard-input div and set content to ""
-  function handleAddButtonClick(foodObj) {
+  function handleAddButtonClick(e, foodObj) {
+    console.log("handleAddButtonClick");
     setSelectedFood(foodObj);
     setFoodCardInput("");
   }
 
-  return foods.map((foodObj) => {
+  return filteredFoods.map((foodObj) => {
     return (
-      <div key={foodObj.name} className="foodCard">
+      <div
+        key={foodObj.name}
+        className="foodCard"
+        onClick={(e) => handleAddButtonClick(e, foodObj)}
+      >
         <div className="foodCard-info">
-          <h2 onClick={(e) => handleAddButtonClick(foodObj, e.target)}>
-            {foodObj.name}
-          </h2>
-          <div className="foodcard-macros">
-            <span>
-              protein: <b>{foodObj.protein}</b>
-            </span>
-            <span>
-              fats: <b>{foodObj.fats}</b>
-            </span>
-            <span>
-              carbs: <b>{foodObj.carbs}</b>
-            </span>
+          <div className="name-macros-container">
+            <h3 onClick={(e) => handleAddButtonClick(foodObj, e.target)}>
+              {foodObj.name}
+            </h3>
+            <div>
+              <span>
+                protein: <span className="macro-value">{foodObj.protein}g</span>
+              </span>
+              <span>
+                carbs: <span className="macro-value">{foodObj.carbs}g</span>
+              </span>
+              <span>
+                fats: <span className="macro-value">{foodObj.fats}g</span>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -93,15 +110,12 @@ export default function FoodsPanel({ mealTypeSelected }) {
               }
             ></input>
             {foodCardInput === "" ? (
-              <img
-                className="disabled"
-                src="./assets/tick_svg_disabled.svg"
-              ></img>
+              <CircleCheckBig className="disabled" />
             ) : (
-              <img
+              <CircleCheckBig
+                className="enabled"
                 onClick={(e) => handleFoodAddition(e, foodObj)}
-                src="./assets/tick_svg_blue.svg"
-              ></img>
+              />
             )}
           </div>
         ) : (
@@ -118,10 +132,6 @@ export default function FoodsPanel({ mealTypeSelected }) {
                   Food Added!
                 </span>
               )}
-            <img
-              onClick={(e) => handleAddButtonClick(foodObj)}
-              src="./assets/plus_svg.svg"
-            ></img>
           </>
         )}
       </div>

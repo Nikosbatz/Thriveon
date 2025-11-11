@@ -19,11 +19,15 @@ export default function UserContextProvider({ children }) {
   }, []);
 
   async function updateInfo(info) {
-    console.log(info);
-    const newUser = await postUserInfo(info);
-    setUserProfile(newUser);
-    console.log(newUser);
-    return;
+    try {
+      console.log(info);
+      const newUser = await postUserInfo(info);
+      setUserProfile(newUser);
+      console.log(newUser);
+      return;
+    } catch (error) {
+      alert(error.message);
+    }
   }
 
   return (

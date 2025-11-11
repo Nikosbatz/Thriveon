@@ -15,7 +15,7 @@ import { useNavigate, replace } from "react-router-dom";
 import { UserContext } from "../Contexts/UserContext/UserContext";
 import toast from "react-hot-toast";
 import calculateGoals from "./calculateGoals";
-import * as yup from "yup";
+import { schemaRequired } from "../utilities/formSchemaValidation";
 import Plan from "./Plan";
 
 export default function OnBoarding() {
@@ -31,20 +31,11 @@ export default function OnBoarding() {
   const { userProfile, updateInfo } = useContext(UserContext);
   const [requestPending, setRequestPending] = useState(false);
 
-  // Form schema for validation
-  const schema = yup.object().shape({
-    goal: yup.number().oneOf([0, 1, 2]).required(),
-    gender: yup.string().oneOf(["male", "female"]).required(),
-    height: yup.number().min(100).max(250).required(),
-    weight: yup.number().min(30).max(180).required(),
-    age: yup.number().min(13).max(120).required(),
-    activity: yup.number().oneOf([0, 1, 2, 3]).required(),
-  });
-
   async function handleSubmit(e) {
     e.preventDefault();
     setRequestPending(true);
 
+    // conversion to Number is optional (it is handled by the back-end also)
     const formInputsClone = {
       ...formInputs,
       weight: Number(formInputs.weight),
@@ -59,7 +50,7 @@ export default function OnBoarding() {
 
     try {
       // Validate Form Values
-      schema.validateSync(formInputsClone, { abortEarly: false });
+      schemaRequired.validateSync(formInputsClone, { abortEarly: false });
 
       // Send request to back-end VIA userContext's "updateInfo()"
       await updateInfo(formInputsClone);

@@ -1,4 +1,5 @@
 const FoodLog = require("../models/foodLog.model.js");
+const User = require("../models/user.model.js");
 
 async function getUserWaterLog(req, res) {
   const userId = req.userId;
@@ -116,9 +117,10 @@ async function postUserWeightLog(req, res) {
       { $set: { "logs.$.weight": weight } },
       { new: true }
     );
+
     // if a log for the current date and userId exists and the $set is successful
     if (logs) {
-      return res.status(200).send();
+      return res.status(200).json(logs.logs);
     }
     // if a log for the current date doesnt exist create a new one and $set the weight field
     else {

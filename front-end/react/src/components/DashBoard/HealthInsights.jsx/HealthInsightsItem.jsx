@@ -34,7 +34,7 @@ export default function HealthInsightsItem({ nutrient }) {
     suggestion.imagePath = "../../../../assets/suggestion_orange.svg";
   } else if (dailyGoalPercentage <= 99) {
     suggestion.currentIntake = 3;
-    suggestion.color = "rgba(255, 208, 0, 0.53)";
+    suggestion.color = "rgba(225, 255, 0, 0.53)";
     suggestion.message = `You are close to hitting your ${nutrient} Goal!`;
     suggestion.imagePath = "../../../../assets/suggestion_yellow.svg";
   } else {
@@ -46,17 +46,18 @@ export default function HealthInsightsItem({ nutrient }) {
   return (
     <div
       style={{
-        background: `linear-gradient(270deg, ${suggestion.color} 6%, rgba(25, 25, 25, 1) 0.05%)`,
+        background: `linear-gradient(270deg, ${suggestion.color} 6%, rgba(25, 25, 25, 0.6) 0.05%)`,
       }}
       onMouseEnter={() => setHintHover(true)}
       onMouseLeave={() => setHintHover(false)}
       className="insights-card-item"
     >
-      <h2>{nutrient}</h2>
       <img src={suggestion.imagePath}></img>
-      {hintHover ? (
+
+      <div className="flex-row-container">
+        <h2>{nutrient}</h2>
         <InsightHintModal suggestion={suggestion}></InsightHintModal>
-      ) : null}
+      </div>
     </div>
   );
 }

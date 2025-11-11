@@ -7,7 +7,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import TrackerPanel from "./components/Tracker/TrackerPanel";
 import MainLayout from "./components/MainLayout";
 import AddFoodPanel from "./components/Add Food Panel/AddFoodPanel";
 import MyProfileLayout from "./components/My Profile/MyProfileLayout";
@@ -25,8 +24,10 @@ import OnBoarding from "./components/OnBoarding/OnBoarding";
 import Plan from "./components/OnBoarding/Plan";
 import UserContextProvider from "./components/Contexts/UserContext/UserContextProvider";
 import OnBoardingLayout from "./components/OnBoarding/OnBoardingLayout";
+import LandingPage from "./components/LandingPage/LandingPage";
 
 const router = createBrowserRouter([
+  { path: "/", element: <LandingPage /> },
   {
     path: "/auth",
     element: (
@@ -46,19 +47,18 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/",
+    path: "/app",
     element: (
       <UserContextProvider>
         <MainLayout />
       </UserContextProvider>
     ),
     children: [
-      { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: "/dashboard", index: true, element: <DashBoard /> },
-      { path: "/calorie-tracker", element: <TrackerPanel /> },
-      { path: "/add-food", element: <AddFoodPanel /> },
+      { index: true, element: <Navigate to="/app/dashboard" replace /> },
+      { path: "dashboard", index: true, element: <DashBoard /> },
+      { path: "add-food", element: <AddFoodPanel /> },
       {
-        path: "/my-profile",
+        path: "my-profile",
         element: <MyProfileLayout />,
         children: [
           { index: true, element: <Navigate to="./personal-info" replace /> },
@@ -81,7 +81,7 @@ const router = createBrowserRouter([
       { path: "plan", element: <Plan></Plan> },
     ],
   },
-  { path: "/*", element: <Navigate to="/" replace /> },
+  { path: "/*", element: <Navigate to="/app/dashboard" replace /> },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

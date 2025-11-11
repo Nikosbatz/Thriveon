@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { login, register } from "../../api/requests";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useOutletContext } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
@@ -14,20 +14,35 @@ export default function Login() {
   const [registerClicked, setRegisterClicked] = useState(false);
   const [showPassword, setshowPassword] = useState(false);
   const navigate = useNavigate();
+  const { setUserEmail } = useOutletContext();
 
   async function handleLoginRequest() {
-    console.log(loginForm);
+    // set user email to <Auth/> state
+
     setLoginPending(true);
     try {
-      await login(loginForm.email.toLowerCase(), loginForm.password);
-      navigate("/dashboard");
+      const res = await login(
+        loginForm.email.toLowerCase(),
+        loginForm.password
+      );
+      setUserEmail(loginForm.email.toLowerCase());
+
+      if (res.isVerified === true) {
+        navigate("/app/dashboard");
+      } else {
+        navigate("/auth/verify-email");
+      }
     } catch (err) {
       setLoginPending(false);
       alert("WRONG CREDENTIALS");
     }
   }
 
+  // fix register to not save access token
   async function handleRegisterRequest() {
+    // set user email to <Auth/> state
+    setUserEmail(registerForm.email.toLowerCase());
+
     setLoginPending(true);
     if (registerForm.confirm_pass !== registerForm.password) {
       alert("Passwords should match!");

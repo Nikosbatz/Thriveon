@@ -9,8 +9,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import React from "react";
 
-export default function WeightBarChart({ weightLogs }) {
+const WeightBarChart = ({ weightLogs }) => {
   return (
     <ResponsiveContainer width="100%" height="80%">
       <BarChart
@@ -35,4 +36,6 @@ export default function WeightBarChart({ weightLogs }) {
       </BarChart>
     </ResponsiveContainer>
   );
-}
+};
+
+export default React.memo(WeightBarChart);

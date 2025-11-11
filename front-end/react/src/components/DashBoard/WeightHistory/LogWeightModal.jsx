@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { postUserWeightLogs } from "../../../api/requests";
+import { UserContext } from "../../Contexts/UserContext/UserContext";
+import { schema } from "../../utilities/formSchemaValidation";
+import toast from "react-hot-toast";
 
 export default function LogWeightModal({
   logWeightClicked,
   setLogWeightClicked,
   handleSuccessMessage,
+  setWeightLogs,
 }) {
   const [fetchingData, setFetchingData] = useState(false);
   const [weightInput, setWeightInput] = useState("");
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
+  const { userProfile, updateInfo } = useContext(UserContext);
 
   async function handleLogWeight() {
     setFetchingData(true);
@@ -19,14 +24,24 @@ export default function LogWeightModal({
     }
 
     try {
-      const res = await postUserWeightLogs(Number(weightInput));
+      // validate inputs
+      schema.validateSync({ weight: weightInput }, { abortEarly: false });
+
+      // update user logs (FoodLog)
+      const resLogs = await postUserWeightLogs(weightInput);
+      console.log(resLogs);
+      setWeightLogs(resLogs);
+
+      // update user profile (User)
+      await updateInfo({ weight: weightInput });
       setLogWeightClicked(false);
       handleSuccessMessage(true);
     } catch (error) {
-      alert("Could not log user's weight");
+      toast.error(error.message);
     }
     setFetchingData(false);
   }
+
   return (
     <div
       className={

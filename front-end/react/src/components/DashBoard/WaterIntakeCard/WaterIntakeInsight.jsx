@@ -1,6 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { getUserWaterIntake, postUserWaterIntake } from "../../../api/requests";
 import { useClickOutside } from "../../useClickOutside";
+import { UserContext } from "../../Contexts/UserContext/UserContext";
 
 export default function WaterIntakeInsight() {
   const [isClicked, setIsClicked] = useState(false);
@@ -8,20 +9,7 @@ export default function WaterIntakeInsight() {
   const [waterIntake, setWaterIntake] = useState(0);
   const inputRef = useRef(null);
   const cardRef = useRef(null);
-
-  /*useEffect(() => {
-    async function getWater(userId) {
-      try {
-        const res = await getUserWaterIntake(userId);
-        setWaterIntake(res);
-      } catch (error) {
-        alert(error);
-        setWaterIntake(0);
-      }
-    }
-    getWater("68af8401a59ee8c515ee275e");
-    return () => {};
-  }, []);*/
+  const { userProfile } = useContext(UserContext);
 
   // useEffect to fetch the user's  water intake amount from the back-end
   useEffect(() => {
@@ -30,7 +18,7 @@ export default function WaterIntakeInsight() {
 
     const fetchWaterIntake = async () => {
       try {
-        const data = await getUserWaterIntake("68af8401a59ee8c515ee275e");
+        const data = await getUserWaterIntake();
         if (isMounted) {
           setWaterIntake(data);
         }
@@ -45,13 +33,11 @@ export default function WaterIntakeInsight() {
       isMounted = false;
     };
   }, []);
-  // -------- useEffect --------
 
   // Click Outside useEffect
   useClickOutside(cardRef, () => {
     setIsClicked(false);
   });
-  //-------- Click Outside --------
 
   function handleCardClick() {
     setIsClicked(!isClicked);
@@ -67,10 +53,20 @@ export default function WaterIntakeInsight() {
   }
 
   async function handleAddWater(water) {
+    // get waterGoal from User profile
+    const waterGoal = userProfile.healthGoals.water;
+    // Validation check that water is a Number
+    let waterInputNum = Number.isNaN(water) ? 0 : Number(water);
+    // Dont let waterInput exceed the water daily goal
+    if (waterInputNum > waterGoal) {
+      waterInputNum = waterGoal;
+    }
+    // Calculate the percentage of the daily water intake Goal
+    const dailyIntakePercentage = Math.floor((waterInputNum / waterGoal) * 100);
     try {
       // returns the water amount if the response status is '200' or '201'
-      const res = await postUserWaterIntake(Number(water));
-      setWaterIntake(res);
+      const res = await postUserWaterIntake(waterInputNum);
+      setWaterIntake(dailyIntakePercentage);
       setwaterInput("");
       setIsClicked(false);
     } catch (error) {

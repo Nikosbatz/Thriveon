@@ -1,12 +1,24 @@
 import { useRef, useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { postEmailVerificationToken } from "../../api/requests";
-import { useNavigate, Link } from "react-router-dom";
+import {
+  postEmailVerificationToken,
+  getEmailVerificationToken,
+} from "../../api/requests";
+import { useNavigate, Link, useOutletContext } from "react-router-dom";
 
 export default function VerifyEmail() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [codeResent, setCodeResent] = useState(false);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
+  const { userEmail } = useOutletContext();
+
+  // Do not let users load this page without loging in or registering first
+  useEffect(() => {
+    if (!userEmail) {
+      navigate("/auth/login");
+    }
+  }, []);
 
   useEffect(() => {
     if (code.every((digit) => digit !== "")) {
@@ -22,11 +34,20 @@ export default function VerifyEmail() {
       toast.success("Email verified successfully", {
         duration: 4000,
       });
-      navigate("/dashboard");
+      navigate("/app/dashboard");
     } catch (error) {
       toast.error(error.message, {
         duration: 2000,
       });
+    }
+  }
+
+  async function handleRequestVerificationCode() {
+    setCodeResent(true);
+    try {
+      const res = await getEmailVerificationToken(userEmail);
+    } catch (error) {
+      toast.error(error.message);
     }
   }
 
@@ -69,14 +90,23 @@ export default function VerifyEmail() {
               ref={(el) => (inputRefs.current[index] = el)}
               maxLength="6"
               value={digit}
-              type="text"
+              type="number"
+              autoComplete="off"
               onChange={(e) => handleInputChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
             />
           ))}
         </div>
       </form>
-      <Link to={"/dashboard"}>Skip Verification</Link>
+      {!codeResent ? (
+        <span onClick={handleRequestVerificationCode}>
+          Resend verification code
+        </span>
+      ) : (
+        <span className="resent">
+          Verification Code re-sent to your e-mail !
+        </span>
+      )}
     </div>
   );
 }

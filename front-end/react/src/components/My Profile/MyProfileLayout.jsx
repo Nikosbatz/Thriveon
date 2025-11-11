@@ -8,7 +8,7 @@ export default function MyProfileLayout() {
   return (
     <main className="my-profile-layout">
       <ProfileNav location={location}></ProfileNav>
-      <div className="profile-outlet">
+      <div className="profile-outlet modal">
         <Outlet></Outlet>
       </div>
       {/*<MyProgress></MyProgress>*/}

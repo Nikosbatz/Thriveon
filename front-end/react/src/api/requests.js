@@ -16,16 +16,20 @@ export async function login(email, password) {
   };
 
   const res = await fetch(`${BASE_URI}/user/login`, options);
+  const data = await res.json();
+
+  console.log(res.status);
 
   if (res.status === 200) {
-    const data = await res.json();
     data.accessToken
       ? localStorage.setItem("token", data.accessToken)
       : alert("Server Could not Create Token");
 
-    return;
+    return data;
   } else if (res.status === 401) {
     throw new Error("Wrong Credentials...");
+  } else if (res.status === 403) {
+    return data;
   }
 }
 
@@ -45,18 +49,35 @@ export async function register(email, password) {
 
   const res = await fetch(`${BASE_URI}/user/register`, options);
 
-  // If status === created successfully || status === bad gateway (Could not send verification email) then save token
-  if (res.status === 201 || res.status === 502) {
+  // If status === user created successfully
+  if (res.status === 201) {
     const data = await res.json();
-    data.accessToken
-      ? localStorage.setItem("token", data.accessToken)
-      : alert("Server Could not Create Token");
-
     return;
   } else if (res.status === 400) {
     throw new Error("A user with this E-mail already exists...");
   } else if (res.status === 409) {
     throw new Error("User Couldn't be Created. Try again later...");
+  }
+}
+
+export async function getEmailVerificationToken(email) {
+  const options = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json;charset=UTF-8",
+    },
+    body: JSON.stringify({ email: email }),
+  };
+
+  const res = await fetch(`${BASE_URI}/user/resend-verification-code`, options);
+
+  if (res.status === 200) {
+    return;
+  } else if (res.status === 401) {
+    throw new Error("User was not found!");
+  } else {
+    throw new Error("Could not send email to user. Please contact support.");
   }
 }
 
@@ -73,8 +94,14 @@ export async function postEmailVerificationToken(verificationToken) {
   };
 
   const res = await fetch(`${BASE_URI}/user/verify-email`, options);
+  const data = await res.json();
 
   if (res.status === 200) {
+    // store access token in localstorage
+    if (data.accessToken) {
+      localStorage.setItem("token", data.accessToken);
+    }
+
     return;
   } else if (res.status === 400) {
     throw new Error("Invalid or Expired verification token");
@@ -354,7 +381,7 @@ export async function postUserWeightLogs(weight) {
 
   if (res.status === 200 || res.status === 201) {
     console.log("200 weight");
-    return;
+    return await res.json();
   } else {
     throw Error();
   }

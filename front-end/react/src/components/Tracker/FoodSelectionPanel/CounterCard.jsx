@@ -18,15 +18,26 @@ export default function CounterCard({ mealTypeSelected, setMealTypeSelected }) {
             {todaysFoods.map((food) =>
               food.mealType === mealTypeSelected ? (
                 <li className="food-container" key={food.key}>
-                  <h3>{food.name}</h3>
-                  <span>
-                    calories: {food.calories} <br />
-                    grams: {food.grams}
-                  </span>
-                  <span>protein: {food.protein}</span>
-                  <span>carbs: {food.carbs}</span>
-                  <span>fats: {food.fats}</span>
+                  <div className="name-macros-container">
+                    <h3>
+                      {food.name} ({food.grams}g)
+                    </h3>
+                    <div>
+                      <span>
+                        protein:{" "}
+                        <span className="macro-value">{food.protein}g</span>
+                      </span>
+                      <span>
+                        carbs:{" "}
+                        <span className="macro-value">{food.carbs}g</span>
+                      </span>
+                      <span>
+                        fats: <span className="macro-value">{food.fats}g</span>
+                      </span>
+                    </div>
+                  </div>
 
+                  <span className="calories-value">{food.calories} kcal</span>
                   <img
                     id="trash-can"
                     onClick={(e) => handleRemoveFood(e, food, mealTypeSelected)}

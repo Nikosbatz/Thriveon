@@ -1,8 +1,11 @@
 import { act, useState } from "react";
 import { Link } from "react-router-dom";
+import { IdCard, Crosshair, ShieldHalf } from "lucide-react";
 
 export default function ProfileNav({ location }) {
   const [activeLink, setActiveLink] = useState(0);
+
+  console.log(menuOptions[activeLink]);
 
   return (
     <nav className="profile-nav">
@@ -10,9 +13,9 @@ export default function ProfileNav({ location }) {
         <Link
           to={option.link}
           onClick={() => setActiveLink(index)}
-          className={location.pathname === option.link ? "active" : null}
+          className={location.pathname.includes(option.link) ? "active" : null}
         >
-          <img src={option.img}></img>
+          {option.iconElement}
           <span>{option.name}</span>
         </Link>
       ))}
@@ -23,17 +26,17 @@ export default function ProfileNav({ location }) {
 const menuOptions = [
   {
     name: "Personal Info",
-    link: "/my-profile/personal-info",
-    img: "/assets/personal-info.svg",
+    link: "personal-info",
+    iconElement: <IdCard></IdCard>,
   },
   {
     name: "My Goals",
-    link: "/my-profile/personal-goals",
-    img: "/assets/target.svg",
+    link: "personal-goals",
+    iconElement: <Crosshair></Crosshair>,
   },
   {
     name: "Security",
-    link: "/my-profile/security",
-    img: "/assets/security.svg",
+    link: "security",
+    iconElement: <ShieldHalf></ShieldHalf>,
   },
 ];

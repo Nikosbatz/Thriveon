@@ -55,11 +55,10 @@ async function createUser(req, res) {
     } catch (error) {
       //catch the cannot send email error
       console.log(error.message);
+      throw new Error("Could not send e-mail to user");
     }
 
-    const token = generateAccessToken(user._id);
-
-    res.status(201).json({ accessToken: token });
+    res.status(201).json();
   } catch (err) {
     //console.log(err);
     res.status(409).json({ message: "Error 409\nUser could not be created!" });
@@ -87,11 +86,37 @@ async function verifyUser(req, res) {
     user.isVerified = true;
     await user.save();
 
+    const token = generateAccessToken(user._id);
     // return OK status
-    return res.status(200).send();
+    return res.status(200).json({ accessToken: token });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: "User couldnt be verified " });
+  }
+}
+
+async function sendVerificationCode(req, res) {
+  const userEmail = req.body.email;
+
+  try {
+    const user = await User.findOne({ email: userEmail });
+
+    if (!user) return res.status(401).json({ message: "User not found" });
+
+    const verificationToken = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    user.verificationToken = verificationToken;
+    user.verificationTokenExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
+    await user.save();
+
+    const emailResult = await sendVerificationEmail(
+      userEmail,
+      verificationToken
+    );
+  } catch (error) {
+    res.status(400).json({ message: "Could not send email to user" });
   }
 }
 
@@ -104,6 +129,10 @@ async function loginUser(req, res) {
     // Check if user exists
     const user = await User.findOne({ email: userEmail });
     if (!user) return res.status(401).json({ message: "User not found" });
+    if (!user.isVerified)
+      return res
+        .status(403)
+        .json({ email: userEmail, isVerified: user.isVerified });
 
     // Check if given password and DB-password match
     const passMatch = await bcrypt.compare(userPass, user.password);
@@ -113,7 +142,7 @@ async function loginUser(req, res) {
 
     const token = generateAccessToken(user._id);
 
-    res.status(200).json({ accessToken: token });
+    res.status(200).json({ accessToken: token, isVerified: user.isVerified });
   } catch (error) {}
 }
 
@@ -181,10 +210,8 @@ async function resetPassword(req, res) {
 }
 
 async function getInfo(req, res) {
+  //TODO: exclude sensitive fields from the returning object (e.g. password)
   const userId = req.userId;
-
-  console.log(userId);
-
   try {
     const user = await User.findOne({ _id: userId });
 
@@ -192,7 +219,7 @@ async function getInfo(req, res) {
       return res.status(401).send();
     }
 
-    console.log(user._doc);
+    //console.log(user._doc);
     res.status(200).json(user._doc);
   } catch (error) {}
 }
@@ -209,6 +236,7 @@ async function updateInfo(req, res) {
     "age",
     "weight",
     "height",
+    "gender",
     "country",
     "goal",
     "nutritionGoals",
@@ -261,4 +289,5 @@ module.exports = {
   updateInfo,
   authToken,
   getInfo,
+  sendVerificationCode,
 };
