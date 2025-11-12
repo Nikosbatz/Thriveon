@@ -43,7 +43,13 @@ export async function sendPasswordResetEmail(userEmail, resetToken) {
   let emailAPI = new TransactionalEmailsApi();
   emailAPI.authentications.apiKey.apiKey = process.env.BREVO_API_TOKEN;
 
-  const URI = process.env.CLIENT_URI + `/auth/reset-password/${resetToken}`;
+  let URI = null;
+  if (process.env.NODE_ENV === "production") {
+    URI = process.env.CLIENT_URI + `/auth/reset-password/${resetToken}`;
+  } else {
+    console.log(process.env.DEV_CLIENT_URI);
+    URI = process.env.DEV_CLIENT_URI + `/auth/reset-password/${resetToken}`;
+  }
 
   let message = new SendSmtpEmail();
   message.subject = "Password Reset Request";
