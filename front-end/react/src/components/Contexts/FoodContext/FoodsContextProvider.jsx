@@ -26,7 +26,7 @@ export default function FoodsContextProvider({ children }) {
         const todaysFoodsData = await getUserTodayFoods();
         console.log("GET USER FOODS");
         //console.log(foodsData);
-        //console.log(todaysFoodsData);
+        console.log("todaysFoodsData: ", todaysFoodsData);
         setFoods(foodsData);
         setTodayFoods(todaysFoodsData);
       } catch (err) {
@@ -140,7 +140,6 @@ export default function FoodsContextProvider({ children }) {
       const res = await postFood(foodToUpload, "/foods/userlogs");
       console.log(res.message);
       setTodayFoods((prev) => [...prev, res.message]);
-      console.log(res);
     } catch (err) {
       console.log(err);
     }

@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useClickOutside } from "../../useClickOutside";
 import { postUserActivity } from "../../../api/requests";
 import { RemoveScroll } from "react-remove-scroll";
-import { X } from "lucide-react";
+import { X, ArrowDown } from "lucide-react";
 
 export default function AddActivityModal({
   addActivityClicked,
@@ -91,7 +91,8 @@ export default function AddActivityModal({
                 className={activitySelected ? "selection active" : "selection"}
               >
                 {activityValues.activityType}
-                <img src="./assets/arrow_down_white.svg"></img>
+
+                <ArrowDown />
               </span>
               <div className="dropdown-container">
                 <ul

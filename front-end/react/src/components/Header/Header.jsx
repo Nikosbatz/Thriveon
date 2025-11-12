@@ -26,10 +26,11 @@ export default function Header({ location }) {
   return (
     <header id="header" className={searchSelected ? "dark" : null}>
       <div className="logo-container">
-        <Activity></Activity>
+        <img src="../assets/logo_chat.png" alt="" />
+        {/*<Activity></Activity>*/}
         <div>
-          <h2>NutriTrack</h2>
-          <p>Track your wellness journey</p>
+          <h2>Thriveon</h2>
+          <p>Track. Grow. Thriveon.</p>
         </div>
       </div>
       <div className="spacer"></div>

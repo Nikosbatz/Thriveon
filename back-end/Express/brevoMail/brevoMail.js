@@ -51,8 +51,6 @@ export async function sendPasswordResetEmail(userEmail, resetToken) {
     URI = process.env.DEV_CLIENT_URI + `/auth/reset-password/${resetToken}`;
   }
 
-  console.log("reset password uri: ", URI);
-
   let message = new SendSmtpEmail();
   message.subject = "Password Reset Request";
   message.sender = {

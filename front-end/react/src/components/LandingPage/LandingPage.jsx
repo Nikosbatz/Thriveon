@@ -21,8 +21,11 @@ export default function LandingPage() {
     <div className="landing-page-root">
       <header className="landing-page-header">
         <div className="logo-container">
-          <Activity />
-          <h2>NutriTracker</h2>
+          <img src="../assets/logo_chat.png" alt="" />
+          <div>
+            <h2>Thriveon</h2>
+            <p>Track. Grow. Thriveon.</p>
+          </div>
         </div>
         <nav>
           <a href="#preview-section">Preview</a>

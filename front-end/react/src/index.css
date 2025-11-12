@@ -214,6 +214,10 @@ body.no-scroll {
   padding-left: 1em;
 }
 
+.landing-page-root .logo-container img {
+  width: 5em;
+  height: 3em;
+}
 .landing-page-root .logo-container svg {
   background-color: var(--lv-primary-20);
   color: var(--lv-primary);
@@ -225,6 +229,15 @@ body.no-scroll {
 .landing-page-root .logo-container h2 {
   color: white;
   margin: 0;
+  text-align: start;
+  font-size: 1.2em;
+}
+
+.landing-page-root .logo-container p {
+  margin: 0;
+  color: white;
+  font-size: 0.9em;
+  font-weight: 300;
 }
 /*------ HEADER ------ */
 .landing-page-header {
@@ -1434,6 +1447,11 @@ body.no-scroll {
   gap: 0.4em;
 }
 
+#header .logo-container img {
+  width: 5em;
+  height: 3em;
+}
+
 #header .logo-container svg {
   background-color: var(--lv-primary-20);
   color: var(--lv-primary);
@@ -2488,18 +2506,16 @@ body.no-scroll {
   align-items: center;
   justify-content: center;
 }
-
-.add-water-container img {
-  width: 1.7em;
-  cursor: pointer;
-  transition: transform 0.1s ease;
+.add-water-container svg {
+  color: rgb(33, 33, 222);
+  transition: all 0.1s ease-in-out;
 }
-
-.add-water-container img:hover {
-  transform: scale(1.15);
+.add-water-container svg:hover {
+  transform: scale(1.05);
+  color: rgb(87, 137, 207);
 }
-
-.add-water-container img.disabled:hover {
+.add-water-container svg.disabled {
+  color: gray;
   transform: none;
 }
 
@@ -2907,13 +2923,14 @@ body.no-scroll {
   border: 1px solid rgb(95, 95, 95);
 }
 
-.add-activity-form .selection img {
+.add-activity-form .selection svg {
+  background: transparent;
+  padding: 0;
   width: 1.5em;
-  transform: rotate(0deg);
+  height: 1.5em;
   transition: transform 0.2s ease-in-out;
 }
-
-.add-activity-form .selection.active img {
+.add-activity-form .selection.active svg {
   transform: rotate(180deg);
 }
 
@@ -2960,6 +2977,9 @@ body.no-scroll {
   align-items: start;
   gap: 0.2em;
   width: 100%;
+}
+
+.activity-input-container svg {
 }
 
 .add-activity-form .dropdown li {
@@ -3012,11 +3032,6 @@ body.no-scroll {
   text-align: center;
   width: 100%;
   text-align: start;
-}
-
-.activity-time-input-container img,
-.activity-calories-input-container img {
-  width: 1.7em;
 }
 
 /* ---------- Add-Activity BREAKPOINTS   ---------- */
@@ -4252,6 +4267,8 @@ body.no-scroll {
   width: 100%;
   text-align: center;
   height: 10vh;
+  background-color: var(--lv-header);
+  border-top: 1px solid rgb(68, 68, 68);
 }
 
 .footer p {

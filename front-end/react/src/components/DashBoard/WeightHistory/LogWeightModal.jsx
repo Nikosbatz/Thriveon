@@ -3,6 +3,7 @@ import { postUserWeightLogs } from "../../../api/requests";
 import { UserContext } from "../../Contexts/UserContext/UserContext";
 import { schema } from "../../utilities/formSchemaValidation";
 import toast from "react-hot-toast";
+import { ArrowDown } from "lucide-react";
 
 export default function LogWeightModal({
   logWeightClicked,

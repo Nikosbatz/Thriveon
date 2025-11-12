@@ -7,7 +7,6 @@ export default function Auth() {
   console.log(userEmail);
   return (
     <div className="login-page-body">
-      <img src="/assets/logo-apple.png" alt="" />
       <Outlet context={{ userEmail, setUserEmail }} />
     </div>
   );

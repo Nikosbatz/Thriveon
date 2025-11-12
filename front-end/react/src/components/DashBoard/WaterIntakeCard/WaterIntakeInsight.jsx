@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { getUserWaterIntake, postUserWaterIntake } from "../../../api/requests";
 import { useClickOutside } from "../../useClickOutside";
 import { UserContext } from "../../Contexts/UserContext/UserContext";
+import { CircleCheckBig } from "lucide-react";
 
 export default function WaterIntakeInsight() {
   const [isClicked, setIsClicked] = useState(false);
@@ -108,15 +109,9 @@ export default function WaterIntakeInsight() {
               value={waterInput}
             ></input>
             {waterInput !== "" ? (
-              <img
-                onClick={() => handleAddWater(waterInput)}
-                src="./assets/tick_svg_blue.svg"
-              ></img>
+              <CircleCheckBig />
             ) : (
-              <img
-                className="disabled"
-                src="./assets/tick_svg_disabled.svg"
-              ></img>
+              <CircleCheckBig className="disabled" />
             )}
           </div>
         </div>
