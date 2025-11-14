@@ -109,7 +109,7 @@ export default function WaterIntakeInsight() {
               value={waterInput}
             ></input>
             {waterInput !== "" ? (
-              <CircleCheckBig />
+              <CircleCheckBig onClick={() => handleAddWater(waterInput)} />
             ) : (
               <CircleCheckBig className="disabled" />
             )}
