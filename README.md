@@ -1,7 +1,14 @@
 # Thriveon
 
-A full-stack calorie and nutrients tracking web app that helps users monitor their **daily calories**, **physical activities**, **daily weight**  and **nutrient intake** with beautiful data visualizations and user-friendly UI UX.
+<p align="center">
+  <a href="https://thriveon.fit">
+    <img width="450" height="350" alt="thriveon logo" src="https://github.com/user-attachments/assets/37aae796-fd80-4460-84b5-d34732845e6b" />
+  </a>
+</p>
 
+A full-stack calorie and nutrients tracking web app that helps users monitor their **daily calories**, **physical activities**, **daily weight** and **nutrient intake** with beautiful data visualizations and user-friendly UI UX.
+
+🌐 **Live App:** [https://thriveon.fit](https://thriveon.fit)
 ---
 
 ## Tech Stack
