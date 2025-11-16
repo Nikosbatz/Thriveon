@@ -74,7 +74,7 @@ export default function OnBoarding() {
   return (
     <main className="on-boarding-container">
       <div className="welcome-container modal">
-        <h2>Welcome NutriTracker!</h2>
+        <h2>Welcome ThriveOn!</h2>
         <h3>
           Tell us a bit more about you, so we can personalize your experience
         </h3>

@@ -15,7 +15,7 @@ export default function Plan() {
         <h2>Your Personal Plan</h2>
         <PersonalGoals></PersonalGoals>
         <span>
-          You are all set! You can now start using <b>NutriTracker</b>.
+          You are all set! You can now start using <b>ThriveOn</b>.
           <br />
           Remember you can always change your personal info on <b>
             My Profile

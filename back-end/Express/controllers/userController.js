@@ -58,7 +58,7 @@ async function createUser(req, res) {
       throw new Error("Could not send e-mail to user");
     }
 
-    res.status(201).json();
+    res.status(201).json({ message: "Successful register" });
   } catch (err) {
     //console.log(err);
     res.status(409).json({ message: "Error 409\nUser could not be created!" });

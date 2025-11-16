@@ -21,7 +21,10 @@ export default function WaterIntakeInsight() {
       try {
         const data = await getUserWaterIntake();
         if (isMounted) {
-          setWaterIntake(data);
+          const dailyIntakePercentage = Math.floor(
+            (data / userProfile.healthGoals.water) * 100
+          );
+          setWaterIntake(dailyIntakePercentage);
         }
       } catch (error) {
         //console.log(error);

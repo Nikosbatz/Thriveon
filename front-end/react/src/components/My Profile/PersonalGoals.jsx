@@ -37,7 +37,7 @@ export default function PersonalGoals() {
       } else {
         // if only 1 error then show toast
         toast.error(error.message);
-        return;
+        setLoading(false);
       }
     }
     setLoading(false);
@@ -54,6 +54,7 @@ export default function PersonalGoals() {
   }
 
   console.log(infoInputs.nutritionGoals.calories);
+  console.log("loading: ", loading);
 
   return (
     <div className="personal-goals">

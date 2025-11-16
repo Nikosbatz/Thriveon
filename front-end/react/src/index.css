@@ -3748,6 +3748,9 @@ body.no-scroll {
   color: var(--cyborg-black);
 }
 
+.on-boarding-container .personal-goals .loading-overlay {
+  display: none;
+}
 .on-boarding-container .loader2 {
   height: 2em;
   margin: 0.5em;

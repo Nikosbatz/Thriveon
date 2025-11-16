@@ -17,7 +17,7 @@ export async function sendVerificationEmail(userEmail, verificationToken) {
   message.subject = "Verify Your Email";
   message.sender = {
     email: "nikosbatznanas@gmail.com",
-    name: "Nutri-Tracker",
+    name: "ThriveOn",
   };
   message.to = [{ email: userEmail }];
   message.htmlContent = VERIFICATION_EMAIL_TEMPLATE.replace(
@@ -55,7 +55,7 @@ export async function sendPasswordResetEmail(userEmail, resetToken) {
   message.subject = "Password Reset Request";
   message.sender = {
     email: "nikosbatznanas@gmail.com",
-    name: "Nutri-Tracker",
+    name: "ThriveOn",
   };
   message.to = [{ email: userEmail }];
   message.htmlContent = PASSWORD_RESET_REQUEST_TEMPLATE.replace(
@@ -81,7 +81,7 @@ export async function sendPasswordResetSuccessEmail(userEmail) {
   message.subject = "Password Reset Success";
   message.sender = {
     email: "nikosbatznanas@gmail.com",
-    name: "Nutri-Tracker",
+    name: "ThriveOn",
   };
   message.to = [{ email: userEmail }];
   message.htmlContent = PASSWORD_RESET_SUCCESS_TEMPLATE;

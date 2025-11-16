@@ -88,11 +88,11 @@ const VERIFICATION_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 letter-spacing: 0.56px;
               "
             >
-              Thank you for singing up to NutriTracker. Use the following OTP
+              Thank you for singing up to ThriveOn. Use the following OTP
               to complete the registration. OTP is
               valid for
               <span style="font-weight: 600; color: #1f1f1f;">24 hours</span>.
-              Do not share this code with others, including NutriTracker staff.
+              Do not share this code with others, including ThriveOn staff.
             </p>
             <p
               style="

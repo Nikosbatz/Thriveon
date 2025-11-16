@@ -138,7 +138,7 @@ async function postUserWeightLog(req, res) {
     }
     // if a new object is created in logs array and the weight field is $set successfully
     if (logs) {
-      return res.status(201).send();
+      return res.status(201).json(logs.logs);
     }
     // if query failed then userId doenst exist
     else {
