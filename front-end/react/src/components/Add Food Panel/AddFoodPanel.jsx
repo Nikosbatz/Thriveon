@@ -1,5 +1,4 @@
 import { useState, useContext } from "react";
-import { FoodsContext } from "../Contexts/FoodContext/FoodsContext";
 import { postFood } from "../../api/requests";
 
 export default function AddFoodPanel() {

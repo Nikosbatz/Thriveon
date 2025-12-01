@@ -1,9 +1,8 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { postUserWeightLogs } from "../../../api/requests";
-import { UserContext } from "../../Contexts/UserContext/UserContext";
 import { schema } from "../../utilities/formSchemaValidation";
 import toast from "react-hot-toast";
-import { ArrowDown } from "lucide-react";
+import { useUserStore } from "../../../store/userStore";
 
 export default function LogWeightModal({
   logWeightClicked,
@@ -15,12 +14,13 @@ export default function LogWeightModal({
   const [weightInput, setWeightInput] = useState("");
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
-  const { userProfile, updateInfo } = useContext(UserContext);
+  const updateInfo = useUserStore((s) => s.updateInfo);
 
   async function handleLogWeight() {
     setFetchingData(true);
     if (weightInput === "") {
-      alert("Weight Input field cannot be empty!");
+      toast.error("Weight input cannot be empty!");
+      setFetchingData(false);
       return;
     }
 

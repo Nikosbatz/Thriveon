@@ -6,13 +6,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { FoodsContext } from "../../Contexts/FoodContext/FoodsContext";
-import { useContext } from "react";
-import { useState, useMemo } from "react";
+import { useUserLogsStore } from "../../../store/userLogsStore";
 
 const COLORS = ["#dcd500ff", "#07d1c7ff", "#28e806ff", "#0539e3ff"];
 export default function CaloriePieChart({}) {
-  const { mealCalories } = useContext(FoodsContext);
+  const mealCalories = useUserLogsStore((s) => s.mealCalories);
+
+  console.log("PIE CHART RE_RENDER");
 
   return (
     <ResponsiveContainer className="pie-chart" height="90%" width="90%">

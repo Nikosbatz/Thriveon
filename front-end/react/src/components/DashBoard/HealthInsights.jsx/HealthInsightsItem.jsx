@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
-import { UserContext } from "../../Contexts/UserContext/UserContext";
-import { FoodsContext } from "../../Contexts/FoodContext/FoodsContext";
+import { useState } from "react";
 import InsightHintModal from "./InsightHintModal";
+import { useUserStore } from "../../../store/userStore";
+import { useUserLogsStore } from "../../../store/userLogsStore";
 
 export default function HealthInsightsItem({ nutrient }) {
-  const { userProfile } = useContext(UserContext);
-  const { todaysMacros } = useContext(FoodsContext);
+  const userProfile = useUserStore((s) => s.userProfile);
+  const todaysMacros = useUserLogsStore((s) => s.todaysMacros);
   const [hintHover, setHintHover] = useState(false);
 
   const nutrientDailyGoal = userProfile.nutritionGoals[nutrient];

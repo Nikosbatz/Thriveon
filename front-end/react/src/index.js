@@ -17,14 +17,14 @@ import Security from "./components/My Profile/Security";
 import Login from "./components/Auth/Login";
 import Auth from "./components/Auth/Auth";
 import VerifyEmail from "./components/Auth/VerifyEmail";
-import { ProtectedRoute, RedirectRoute } from "./components/RouteProtection";
 import ForgotPassword from "./components/Auth/ForgotPassword";
 import ResetPassword from "./components/Auth/ResetPassword";
 import OnBoarding from "./components/OnBoarding/OnBoarding";
 import Plan from "./components/OnBoarding/Plan";
-import UserContextProvider from "./components/Contexts/UserContext/UserContextProvider";
 import OnBoardingLayout from "./components/OnBoarding/OnBoardingLayout";
 import LandingPage from "./components/LandingPage/LandingPage";
+import { RedirectRoute } from "./router/RedirectRoute";
+import ProtectedRoute from "./router/ProtectedRoute";
 
 const router = createBrowserRouter([
   { path: "/", element: <LandingPage /> },
@@ -49,14 +49,13 @@ const router = createBrowserRouter([
   {
     path: "/app",
     element: (
-      <UserContextProvider>
+      <ProtectedRoute>
         <MainLayout />
-      </UserContextProvider>
+      </ProtectedRoute>
     ),
     children: [
       { index: true, element: <Navigate to="/app/dashboard" replace /> },
       { path: "dashboard", index: true, element: <DashBoard /> },
-      { path: "add-food", element: <AddFoodPanel /> },
       {
         path: "my-profile",
         element: <MyProfileLayout />,
@@ -71,11 +70,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/on-boarding",
-    element: (
-      <UserContextProvider>
-        <OnBoardingLayout></OnBoardingLayout>
-      </UserContextProvider>
-    ),
+    element: <OnBoardingLayout></OnBoardingLayout>,
     children: [
       { index: true, element: <OnBoarding></OnBoarding> },
       { path: "plan", element: <Plan></Plan> },

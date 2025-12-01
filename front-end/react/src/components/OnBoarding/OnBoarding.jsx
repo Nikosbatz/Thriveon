@@ -12,11 +12,11 @@ import {
 } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate, replace } from "react-router-dom";
-import { UserContext } from "../Contexts/UserContext/UserContext";
 import toast from "react-hot-toast";
 import calculateGoals from "./calculateGoals";
 import { schemaRequired } from "../utilities/formSchemaValidation";
 import Plan from "./Plan";
+import { useUserStore } from "../../store/userStore";
 
 export default function OnBoarding() {
   const [formInputs, setFormInputs] = useState({
@@ -28,7 +28,9 @@ export default function OnBoarding() {
     age: "",
   });
   const navigate = useNavigate();
-  const { userProfile, updateInfo } = useContext(UserContext);
+  const userProfile = useUserStore((s) => s.userProfile);
+  const updateInfo = useUserStore((s) => s.updateInfo);
+
   const [requestPending, setRequestPending] = useState(false);
 
   async function handleSubmit(e) {
@@ -52,11 +54,12 @@ export default function OnBoarding() {
       // Validate Form Values
       schemaRequired.validateSync(formInputsClone, { abortEarly: false });
 
-      // Send request to back-end VIA userContext's "updateInfo()"
+      // Send request to back-end VIA userStore "updateInfo()"
       await updateInfo(formInputsClone);
 
       // Navigate user to his custom plan
-      navigate("./plan", replace);
+      console.log("object");
+      navigate("./plan", { replace: true });
     } catch (error) {
       // Show multiple toasts if multiple validation errors occur
       if (error.inner && error.inner.length > 0) {

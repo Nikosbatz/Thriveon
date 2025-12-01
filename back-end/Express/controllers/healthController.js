@@ -67,11 +67,9 @@ async function postUserWaterLog(req, res) {
     }
     // if query failed then userId doenst exist
     else {
-      console.log("404");
       return res.status(404).json({ message: "userId doenst exist" });
     }
   } catch (error) {
-    console.log(error);
     res.json({ message: "error" });
   }
 }
@@ -93,7 +91,6 @@ async function getUserWeightLogs(req, res) {
           return { date: log.date, weight: log.weight ? log.weight : null };
         })
         .slice(-7);
-      //console.log(weightLogs);
       res.status(200).json({ data: weightLogs });
     }
   } catch (err) {
@@ -120,7 +117,13 @@ async function postUserWeightLog(req, res) {
 
     // if a log for the current date and userId exists and the $set is successful
     if (logs) {
-      return res.status(200).json(logs.logs);
+      const weightLogs = logs.logs
+        .map((log) => {
+          return { date: log.date, weight: log.weight ? log.weight : null };
+        })
+        .slice(-7);
+
+      return res.status(200).json(weightLogs);
     }
     // if a log for the current date doesnt exist create a new one and $set the weight field
     else {
@@ -145,7 +148,6 @@ async function postUserWeightLog(req, res) {
       return res.status(404).json({ message: "userId doenst exist" });
     }
   } catch (error) {
-    console.log("error");
     res.json({ message: "error" });
   }
 }

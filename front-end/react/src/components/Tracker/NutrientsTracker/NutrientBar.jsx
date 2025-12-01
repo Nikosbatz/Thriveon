@@ -1,5 +1,3 @@
-import React from "react";
-import { useState, useContext } from "react";
 import {
   BarChart,
   Bar,
@@ -9,10 +7,11 @@ import {
   ResponsiveContainer,
   LabelList,
 } from "recharts";
-import { FoodsContext } from "../../Contexts/FoodContext/FoodsContext";
+import { useUserLogsStore } from "../../../store/userLogsStore";
 
 export default function NutrientBar({ nutrient }) {
-  const { todaysMacros, todaysFoods } = useContext(FoodsContext);
+  const todaysMacros = useUserLogsStore((s) => s.todaysMacros);
+  const todaysFoods = useUserLogsStore((s) => s.todaysFoods);
 
   const nutrientData = [{ name: nutrient, value: todaysMacros[nutrient] }];
 

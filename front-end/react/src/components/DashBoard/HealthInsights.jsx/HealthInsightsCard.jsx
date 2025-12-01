@@ -1,10 +1,10 @@
-import { useContext } from "react";
-import { FoodsContext } from "../../Contexts/FoodContext/FoodsContext";
 import HealthInsightsItem from "./HealthInsightsItem";
-import WaterIntakeInsight from "../WaterIntakeCard/WaterIntakeInsight";
+import { useUserStore } from "../../../store/userStore";
+import { useUserLogsStore } from "../../../store/userLogsStore";
 
 export default function HealthInsightsCard() {
-  const { todaysMacros } = useContext(FoodsContext);
+  const todaysMacros = useUserLogsStore((s) => s.todaysMacros);
+
   return (
     <div className="insights-card modal">
       <div className="flex-column-container">

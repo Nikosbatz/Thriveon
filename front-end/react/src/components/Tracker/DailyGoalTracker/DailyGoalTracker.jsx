@@ -1,6 +1,3 @@
-import { useContext } from "react";
-import { UserContext } from "../../Contexts/UserContext/UserContext";
-import { FoodsContext } from "../../Contexts/FoodContext/FoodsContext";
 import {
   RadialBarChart,
   RadialBar,
@@ -12,10 +9,16 @@ import {
   PolarAngleAxis,
 } from "recharts";
 import { Beef, Wheat, Droplets } from "lucide-react";
+import { useUserStore } from "../../../store/userStore";
+import { useUserLogsStore } from "../../../store/userLogsStore";
 
 export default function DailyGoalTracker() {
-  const { userProfile } = useContext(UserContext);
-  const { todaysMacros } = useContext(FoodsContext);
+  const userProfile = useUserStore((s) => s.userProfile);
+  //TODO: NEEDS DEBUGGING
+  const todaysMacros = useUserLogsStore((s) => s.todaysMacros);
+
+  console.log(todaysMacros);
+
   const { nutritionGoals } = userProfile;
 
   const data = [

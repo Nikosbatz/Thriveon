@@ -1,17 +1,17 @@
 import FoodsPanel from "./FoodsPanel";
-import CounterCard from "./CounterCard";
-import { FoodsContext } from "../../Contexts/FoodContext/FoodsContext";
 import { useContext, useState, useMemo } from "react";
+import { useUserLogsStore } from "../../../store/userLogsStore";
 
 export default function FoodListPanel({
   mealTypeSelected,
   handleSearchChange,
 }) {
-  const { handleAddFood, foods } = useContext(FoodsContext);
+  const foods = useUserLogsStore((s) => s.foods);
+
   const [searchInput, setSearchInput] = useState("");
   const [searchBarSelected, setsearchBarSelected] = useState(false);
 
-  // useMemo to avoid un-necessary iterations in each render
+  // useMemo to avoid un-necessary iterations in each render when a new food is added and the context's state is changed
   const filteredFoods = useMemo(() => {
     if (!searchInput) return foods;
 

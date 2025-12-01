@@ -1,8 +1,9 @@
 import { useState, useRef } from "react";
 import { useClickOutside } from "../../useClickOutside";
-import { postUserActivity } from "../../../api/requests";
 import { RemoveScroll } from "react-remove-scroll";
 import { X, ArrowDown } from "lucide-react";
+import { useUserActivitiesStore } from "../../../store/userActivitiesStore";
+import toast from "react-hot-toast";
 
 export default function AddActivityModal({
   addActivityClicked,
@@ -15,7 +16,10 @@ export default function AddActivityModal({
     duration: "",
     calories: "",
   });
-  const [fetchingData, setFetchingData] = useState(false);
+
+  const activitiesLoading = useUserActivitiesStore((s) => s.activitiesLoading);
+  const postUserActivity = useUserActivitiesStore((s) => s.postUserActivity);
+
   const dropdownRef = useRef(null);
 
   // Click Outside useEffect
@@ -39,7 +43,7 @@ export default function AddActivityModal({
         activityValues.calories != ""
       )
     ) {
-      alert("You must fill all the fields");
+      toast.error("You must fill all the fields");
       return;
     }
     // Convert "exercise" and "calories" fields to Number type
@@ -48,14 +52,12 @@ export default function AddActivityModal({
       duration: Number(activityValues.duration),
     };
 
-    setFetchingData(true);
     // Try to POST the activity
     try {
       await postUserActivity(activityValuesConverted);
-      // show success message at "ExerciseTrackerCard"
       handleSuccessMessage(true);
     } catch (error) {
-      alert("couldnt post user activity");
+      //alert(error.message);
     } finally {
       // Close the "addActivityModal", Clear input values,  Un-render the spinner
       setActivityValues({
@@ -63,7 +65,6 @@ export default function AddActivityModal({
         duration: "",
         calories: "",
       });
-      setFetchingData(false);
       setAddActivityClicked(false);
     }
   }
@@ -149,7 +150,7 @@ export default function AddActivityModal({
               </div>
             </div>
             {/* Submit Button */}
-            {fetchingData ? (
+            {activitiesLoading ? (
               <div className="loader"></div>
             ) : (
               <button

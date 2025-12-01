@@ -1,14 +1,15 @@
-import { useContext, useState } from "react";
-import { FoodsContext } from "../../Contexts/FoodContext/FoodsContext";
+import { useUserLogsStore } from "../../../store/userLogsStore";
 
 export default function CounterCard({ mealTypeSelected, setMealTypeSelected }) {
-  const { todaysFoods, removeAllFoods, removeFood } = useContext(FoodsContext);
+  const todaysFoods = useUserLogsStore((s) => s.todaysFoods);
+  const removeFood = useUserLogsStore((s) => s.removeFood);
 
   function handleRemoveFood(e, food, mealTypeSelected) {
     e.stopPropagation();
     removeFood(food, mealTypeSelected);
   }
 
+  console.log(todaysFoods);
   return (
     <div className="counter-card modal">
       <div>

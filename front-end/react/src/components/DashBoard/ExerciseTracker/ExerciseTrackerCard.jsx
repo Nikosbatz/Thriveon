@@ -2,33 +2,23 @@ import { useState, useEffect } from "react";
 import AddActivityModal from "./AddActivityModal";
 import { getUserActivities } from "../../../api/requests";
 import { Flame, Timer } from "lucide-react";
+import { useUserActivitiesStore } from "../../../store/userActivitiesStore";
 
 export default function ExerciseTrackerCard() {
   const [addActivityClicked, setAddActivityClicked] = useState(false);
-  const [userActivities, setUserActivities] = useState([]);
   const [showSucessMessage, setShowSucessMessage] = useState(false);
   const [fadeMessage, setFadeMessage] = useState(false);
 
-  // Color Yellow code: #CBB001
+  const activitiesLoading = useUserActivitiesStore((s) => s.activitiesLoading);
+  const userActivities = useUserActivitiesStore((s) => s.userActivities);
+  const fetchUserActivites = useUserActivitiesStore(
+    (s) => s.fetchUserActivites
+  );
 
   // ===== useEffect =====
   useEffect(() => {
-    let isMounted = true;
-    const fetchUserActivities = async () => {
-      try {
-        const data = await getUserActivities();
-        if (isMounted) {
-          setUserActivities(data.data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchUserActivities();
-    return () => {
-      isMounted = false;
-    };
-  }, [addActivityClicked]);
+    fetchUserActivites();
+  }, []);
 
   function handleSuccessMessage(show) {
     if (show) {
@@ -57,7 +47,7 @@ export default function ExerciseTrackerCard() {
   const caloriesPercentage = Math.floor((totalCalories / 400) * 100);
 
   //console.log(durationPercentage + " : " + caloriesPercentage);
-  console.log(totalCalories + " : " + totalDuration);
+  //console.log(totalCalories + " : " + totalDuration);
 
   // ===== RETURN =====
 

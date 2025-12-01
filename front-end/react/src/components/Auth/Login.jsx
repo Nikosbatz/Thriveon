@@ -2,6 +2,7 @@ import { useState } from "react";
 import { login, register } from "../../api/requests";
 import { useNavigate, Link, useOutletContext } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
@@ -34,7 +35,7 @@ export default function Login() {
       }
     } catch (err) {
       setLoginPending(false);
-      alert("WRONG CREDENTIALS");
+      toast.error("Wrong Credentials. Please try again.");
     }
   }
 
@@ -45,13 +46,13 @@ export default function Login() {
 
     setLoginPending(true);
     if (registerForm.confirm_pass !== registerForm.password) {
-      alert("Passwords should match!");
+      toast.error("Passwords should match!");
       setLoginPending(false);
       return;
     }
 
     if (registerForm.password.length < 8) {
-      alert("Password length should be >=8");
+      toast.error("Password length should be >=8");
       setLoginPending(false);
       return;
     }
@@ -60,7 +61,8 @@ export default function Login() {
       await register(registerForm.email.toLowerCase(), registerForm.password);
       navigate("../verify-email");
     } catch (error) {
-      alert(error.message);
+      toast.error("Something went wrong. Please try again or contact support!");
+      //alert(error.message);
       setLoginPending(false);
     }
   }

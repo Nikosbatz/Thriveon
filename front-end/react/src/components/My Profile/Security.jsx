@@ -1,9 +1,9 @@
 import { useState, useContext } from "react";
-import { useOutletContext } from "react-router-dom";
-import { UserContext } from "../Contexts/UserContext/UserContext";
+import { useUserStore } from "../../store/userStore";
 
 export default function Security() {
-  const { userProfile } = useContext(UserContext);
+  const userProfile = useUserStore((s) => s.userProfile);
+
   const [disabledInputs, setdisabledInputs] = useState(true);
   return (
     <div className="security-container">

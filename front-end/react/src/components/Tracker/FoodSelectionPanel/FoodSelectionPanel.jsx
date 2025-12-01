@@ -1,7 +1,5 @@
-import { useState, useRef, useContext, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
 import FoodListPanel from "./FoodListPanel";
-import { FoodsContext } from "../../Contexts/FoodContext/FoodsContext";
 import CounterCard from "./CounterCard";
 import { X } from "lucide-react";
 import { RemoveScroll } from "react-remove-scroll";
@@ -10,9 +8,7 @@ export default function FoodSelectionPanel({
   openAddCaloriesDialog,
   setOpenAddCaloriesDialog,
 }) {
-  const { foods, todaysFoods } = useContext(FoodsContext);
   const [mealTypeSelected, setMealTypeSelected] = useState("BreakFast");
-  const [inputValue, setInputValue] = useState("");
   const mealtabsRefs = useRef([]);
   const tabIndicatorRef = useRef(null);
   const mealTabsNavRef = useRef(null);
@@ -40,7 +36,6 @@ export default function FoodSelectionPanel({
   //-----------------------
 
   if (!openAddCaloriesDialog) {
-    console.log(openAddCaloriesDialog);
     return null;
   } else
     return (

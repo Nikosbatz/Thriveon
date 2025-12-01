@@ -1,12 +1,13 @@
-import { useState, useContext, useEffect } from "react";
-import { useLocation, useOutletContext } from "react-router-dom";
-import { UserContext } from "../Contexts/UserContext/UserContext";
+import { useState, useEffect } from "react";
 import { nestedSchema } from "../utilities/formSchemaValidation";
 import toast from "react-hot-toast";
+import { useUserStore } from "../../store/userStore";
 
 export default function PersonalGoals() {
   /*const userProfile = useOutletContext();*/
-  const { userProfile, updateInfo } = useContext(UserContext);
+  const userProfile = useUserStore((s) => s.userProfile);
+  const updateInfo = useUserStore((s) => s.updateInfo);
+
   const [infoInputs, setInfoInputs] = useState(userProfile);
   const [disabledInputs, setdisabledInputs] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,7 @@ export default function PersonalGoals() {
       // validate inputs
       nestedSchema.validateSync(infoInputs, { abortEarly: false });
 
-      // Send request to back-end VIA userContext's "updateInfo()"
+      // Send request to back-end VIA userStore "updateInfo()"
       await updateInfo(infoInputs);
       setdisabledInputs(true);
     } catch (error) {

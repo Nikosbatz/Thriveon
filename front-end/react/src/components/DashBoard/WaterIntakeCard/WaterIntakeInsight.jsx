@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import { getUserWaterIntake, postUserWaterIntake } from "../../../api/requests";
 import { useClickOutside } from "../../useClickOutside";
-import { UserContext } from "../../Contexts/UserContext/UserContext";
 import { CircleCheckBig } from "lucide-react";
+import { useUserStore } from "../../../store/userStore";
 
 export default function WaterIntakeInsight() {
   const [isClicked, setIsClicked] = useState(false);
@@ -10,7 +10,7 @@ export default function WaterIntakeInsight() {
   const [waterIntake, setWaterIntake] = useState(0);
   const inputRef = useRef(null);
   const cardRef = useRef(null);
-  const { userProfile } = useContext(UserContext);
+  const userProfile = useUserStore((s) => s.userProfile);
 
   // useEffect to fetch the user's  water intake amount from the back-end
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function WaterIntakeInsight() {
       setwaterInput("");
       setIsClicked(false);
     } catch (error) {
-      alert(error);
+      //alert(error);
     }
   }
 

@@ -49,7 +49,9 @@ async function postTodayUserActivity(req, res) {
 
     // if append was successful return
     if (data) {
-      res.status(200).json({ success: true });
+      res
+        .status(200)
+        .json({ success: true, data: data.logs.at(-1).activities });
     }
     // else create new Log for currentDate and insert activity object
     else {
@@ -74,7 +76,9 @@ async function postTodayUserActivity(req, res) {
 
       // if Log creation and activity insertion was successful return
       if (data) {
-        res.status(201).json({ success: true });
+        res
+          .status(201)
+          .json({ success: true, data: data.logs.at(-1).activities });
       } else {
         throw new Error("Couldnt create log");
       }

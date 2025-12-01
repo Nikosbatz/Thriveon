@@ -3,22 +3,41 @@ import NutrientsTracker from "../Tracker/NutrientsTracker/NutrientsTracker";
 import HealthInsightsCard from "./HealthInsights.jsx/HealthInsightsCard";
 import ExerciseTrackerCard from "./ExerciseTracker/ExerciseTrackerCard";
 import WeightHistoryCard from "./WeightHistory/WeightHistoryCard";
-import { UserContext } from "../Contexts/UserContext/UserContext";
 import { useContext, useEffect, useState } from "react";
-import WaterIntakeInsight from "./WaterIntakeCard/WaterIntakeInsight";
 import WaterIntakeCard from "./WaterIntakeCard/WaterIntakeCard";
 import { ClipboardPlus } from "lucide-react";
 import FoodSelectionPanel from "../Tracker/FoodSelectionPanel/FoodSelectionPanel";
 import StreakCard from "./ExerciseTracker/StreakCard";
-
-<ClipboardPlus />;
+import { useUserLogsStore } from "../../store/userLogsStore";
+import { LoadingComponent } from "../utilities/LoadingComponent";
+import toast from "react-hot-toast";
+import FoodListDialog from "../Tracker/FoodListDialog";
 
 export default function DashBoard() {
-  const { userProfile } = useContext(UserContext);
-  const [openAddCaloriesDialog, setOpenAddCaloriesDialog] = useState(false);
-  //TODO: add a streak card to the dashboard for unimorfity (and stretch activity stats)
+  const loadFoods = useUserLogsStore((s) => s.loadFoods);
+  const logsLoading = useUserLogsStore((s) => s.logsLoading);
+  const getTodayFoods = useUserLogsStore((s) => s.getTodayFoods);
 
-  //TODO: change <img> elements with Lucide icons for faster rendering
+  // Load user logs on mount
+  useEffect(() => {
+    const fetchUserLogs = async () => {
+      try {
+        const logs = await getTodayFoods();
+      } catch (error) {}
+      try {
+        const foods = await loadFoods();
+      } catch (error) {
+        toast.error("Could not fetch foods");
+      }
+    };
+
+    fetchUserLogs();
+  }, []);
+
+  if (logsLoading) {
+    return <LoadingComponent></LoadingComponent>;
+  }
+
   return (
     <main className="dashboard-main">
       <div className="welcome-container">
@@ -27,19 +46,10 @@ export default function DashBoard() {
         </h2>
         <p>Here's your nutrition and activity summary for today</p>
       </div>
-      <button onClick={() => setOpenAddCaloriesDialog((prev) => !prev)}>
-        <ClipboardPlus></ClipboardPlus>Today calories
-      </button>
-      <div
-        className={
-          openAddCaloriesDialog ? "dialog-overlay active" : "dialog-overlay"
-        }
-      >
-        <FoodSelectionPanel
-          setOpenAddCaloriesDialog={setOpenAddCaloriesDialog}
-          openAddCaloriesDialog={openAddCaloriesDialog}
-        ></FoodSelectionPanel>
-      </div>
+
+      <>
+        <FoodListDialog></FoodListDialog>
+      </>
       <div className="dashboard">
         <div className="charts-container">
           <NutrientsTracker></NutrientsTracker>

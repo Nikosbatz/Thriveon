@@ -1,12 +1,11 @@
-import { useState, useRef, useEffect, useContext } from "react";
-import FoodInfoCard from "./FoodInfoCard";
-import { FoodsContext } from "../../Contexts/FoodContext/FoodsContext";
+import { useState, useRef, useEffect } from "react";
 import { useClickOutside } from "../../useClickOutside";
 import { CirclePlus, CircleCheckBig } from "lucide-react";
+import { useUserLogsStore } from "../../../store/userLogsStore";
+import { FixedSizeList as List } from "react-window";
 
 export default function FoodsPanel({ mealTypeSelected, filteredFoods }) {
-  const { handleAddFood } = useContext(FoodsContext);
-
+  const handleAddFood = useUserLogsStore((s) => s.handleAddFood);
   const foodCardInputRef = useRef(null);
   const [selectedFood, setSelectedFood] = useState(null);
   const [gramsQuantity, setGramsQuantity] = useState("");
@@ -15,7 +14,6 @@ export default function FoodsPanel({ mealTypeSelected, filteredFoods }) {
     food: null,
     show: false,
   });
-  const [foodsLoading, setfoodsLoading] = useState(true);
 
   // useEffect to auto-focus clicked element input
   useEffect(() => {
@@ -137,16 +135,4 @@ export default function FoodsPanel({ mealTypeSelected, filteredFoods }) {
       </div>
     );
   });
-
-  /*  selectedFood != null && selectedFood.name === foodObj.name && (
-      <FoodInfoCard
-        mealTypeSelected={mealTypeSelected}
-        foodObj={foodObj}
-        setGramsQuantity={setGramsQuantity}
-        handleAddFood={handleAddFood}
-        gramsQuantity={gramsQuantity}
-        setSelectedFood={setSelectedFood}
-        handleFoodSelection={handleFoodSelection}
-      ></FoodInfoCard>
-    );*/
 }

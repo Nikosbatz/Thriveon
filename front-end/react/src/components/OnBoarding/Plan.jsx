@@ -1,14 +1,14 @@
-import { useContext } from "react";
-import { UserContext } from "../Contexts/UserContext/UserContext";
 import PersonalGoals from "../My Profile/PersonalGoals";
 import { ArrowBigRightDash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../../store/userStore";
 
 export default function Plan() {
-  const { userProfile } = useContext(UserContext);
+  const userProfile = useUserStore((s) => s.userProfile);
+
   const navigate = useNavigate();
 
-  console.log(userProfile.nutritionGoals.calories);
+  console.log(userProfile.nutritionGoals);
   return (
     <main className="on-boarding-container">
       <div className="plan-container modal">

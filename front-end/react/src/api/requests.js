@@ -19,7 +19,7 @@ export async function login(email, password) {
   const data = await res.json();
 
   console.log(res.status);
-
+  console.log(data);
   if (res.status === 200) {
     data.accessToken
       ? localStorage.setItem("token", data.accessToken)
@@ -336,9 +336,10 @@ export async function postUserActivity(activityValues) {
   };
 
   const res = await fetchWrapper(uri, options);
+  const data = await res.json();
 
   if (res.status === 200 || res.status === 201) {
-    return;
+    return data.data;
   } else {
     throw Error();
   }
