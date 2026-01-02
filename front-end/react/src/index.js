@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import MainLayout from "./components/MainLayout";
-import AddFoodPanel from "./components/Add Food Panel/AddFoodPanel";
 import MyProfileLayout from "./components/My Profile/MyProfileLayout";
 import Personalinfo from "./components/My Profile/PersonalInfo";
 import DashBoard from "./components/DashBoard/DashBoard";

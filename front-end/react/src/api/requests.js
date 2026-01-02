@@ -104,7 +104,7 @@ export async function postEmailVerificationToken(verificationToken) {
 
     return;
   } else if (res.status === 400) {
-    throw new Error("Invalid or Expired verification token");
+    throw new Error("Invalid or Expired verification token!");
   } else {
     throw new Error("Server Error. Please try again later...");
   }
@@ -197,6 +197,8 @@ export async function getFoods(path) {
   path = "/foods/userlogs" to fetch the User's food logs (Today currently...)
   */
 
+  console.log("GETFOODS");
+
   const options = {
     method: "GET",
     headers: {
@@ -204,6 +206,8 @@ export async function getFoods(path) {
     },
   };
   const res = await fetchWrapper(`${BASE_URI}${path}`, options);
+
+  console.log("res: ", res);
 
   if (res.ok) {
     const data = await res.json();

@@ -8,7 +8,7 @@ export default function FoodSelectionPanel({
   openAddCaloriesDialog,
   setOpenAddCaloriesDialog,
 }) {
-  const [mealTypeSelected, setMealTypeSelected] = useState("BreakFast");
+  const [mealTypeSelected, setMealTypeSelected] = useState("Breakfast");
   const mealtabsRefs = useRef([]);
   const tabIndicatorRef = useRef(null);
   const mealTabsNavRef = useRef(null);
@@ -48,7 +48,7 @@ export default function FoodSelectionPanel({
             <X></X>
           </button>
           <nav ref={mealTabsNavRef} className="meal-tabs-nav no-select">
-            {["BreakFast", "Lunch", "Dinner", "Snacks"].map((meal, index) => (
+            {["Breakfast", "Lunch", "Dinner", "Snacks"].map((meal, index) => (
               <h2
                 className={
                   mealTypeSelected === meal

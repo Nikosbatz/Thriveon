@@ -56,7 +56,7 @@ async function getUserFoods(req, res) {
   const userId = req.userId;
 
   const currentDate = new Date().toISOString().split("T")[0];
-  //console.log(currentDate);
+  console.log(currentDate);
 
   try {
     const logs = await FoodLog.findOne(
@@ -101,6 +101,8 @@ async function logUserFood(req, res) {
 
   const currentDate = new Date().toISOString().split("T")[0];
 
+  console.log(req.body);
+
   let newObject = null;
   // Try to add the food to an EXISTING LOG with the current date
   try {
@@ -123,7 +125,7 @@ async function logUserFood(req, res) {
     );
 
     if (newObject) {
-      res.status(200).json({ message: newObject.logs.at(-1).foods.at(-1) });
+      res.status(200).json({ message: newObject.logs.at(-1).foods });
     }
     // If a log with current date DOESNT EXIST create a new one (append in the logs array)
     else {
@@ -153,7 +155,7 @@ async function logUserFood(req, res) {
       //console.log(newObject);
 
       if (newObject) {
-        res.status(201).json({ message: newObject.logs.at(-1).foods.at(-1) });
+        res.status(201).json({ message: newObject.logs.at(-1).foods });
       } else {
         throw new Error();
       }

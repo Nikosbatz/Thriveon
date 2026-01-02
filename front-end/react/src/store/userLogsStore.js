@@ -27,6 +27,7 @@ export const useUserLogsStore = create((set, get) => ({
       set({ foods });
       set({ foodsLoading: false });
     } catch (error) {
+      // console.log("error on loadFoods: ", error.message);
       set({ foodsLoading: false });
       throw new Error("Could not communicate with server...");
     }
@@ -121,7 +122,7 @@ export const useUserLogsStore = create((set, get) => ({
       const res = await postFood(foodToUpload, "/foods/userlogs");
       console.log(res.message);
       set((state) => ({
-        todaysFoods: [...state.todaysFoods, res.message],
+        todaysFoods: res.message,
       }));
       get().updateTodayMacros();
     } catch (err) {

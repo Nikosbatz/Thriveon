@@ -27,9 +27,22 @@ async function createUser(req, res) {
     // Hash the password
     const hashedPass = await bcrypt.hash(userData.password, 10);
 
+    // createi verification token
     const verificationToken = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
+
+    // Try to send verification email
+    // if send fails then throws Error and account is not created
+    try {
+      const emailResult = await sendVerificationEmail(
+        userData.email,
+        verificationToken
+      );
+    } catch (error) {
+      //catch the cannot send email error
+      throw new Error();
+    }
 
     // Create User with requested data
     const user = await User.create({
@@ -47,20 +60,9 @@ async function createUser(req, res) {
       nutritionlogs: [],
     });
 
-    try {
-      const emailResult = await sendVerificationEmail(
-        userData.email,
-        verificationToken
-      );
-    } catch (error) {
-      //catch the cannot send email error
-      console.log(error.message);
-      throw new Error("Could not send e-mail to user");
-    }
-
     res.status(201).json({ message: "Successful register" });
   } catch (err) {
-    //console.log(err);
+    console.log("catch: User could not be created!");
     res.status(409).json({ message: "Error 409\nUser could not be created!" });
   }
 }
@@ -129,16 +131,18 @@ async function loginUser(req, res) {
     // Check if user exists
     const user = await User.findOne({ email: userEmail });
     if (!user) return res.status(401).json({ message: "User not found" });
-    if (!user.isVerified)
-      return res
-        .status(403)
-        .json({ email: userEmail, isVerified: user.isVerified });
 
     // Check if given password and DB-password match
     const passMatch = await bcrypt.compare(userPass, user.password);
 
     if (!passMatch)
       return res.status(401).json({ message: "Invalid credentials" });
+
+    // Check if user is Verified
+    if (!user.isVerified)
+      return res
+        .status(403)
+        .json({ email: userEmail, isVerified: user.isVerified });
 
     const token = generateAccessToken(user._id);
 
@@ -210,8 +214,9 @@ async function resetPassword(req, res) {
 }
 
 async function getInfo(req, res) {
-  //TODO: exclude sensitive fields from the returning object (e.g. password)
   const userId = req.userId;
+  console.log("userid: ", userId);
+
   try {
     const user = await User.findOne({ _id: userId });
 
@@ -219,9 +224,12 @@ async function getInfo(req, res) {
       return res.status(401).send();
     }
 
-    //console.log(user._doc);
-    res.status(200).json(user._doc);
-  } catch (error) {}
+    //Exclude sensitive properties from the returning object
+    const { __v, password, mfa, ...safeUser } = user._doc;
+    res.status(200).json(safeUser);
+  } catch (error) {
+    res.status(500).send();
+  }
 }
 
 async function updateInfo(req, res) {
