@@ -13,7 +13,7 @@ export const useUserLogsStore = create((set, get) => ({
     fats: 0,
   },
   mealCalories: [
-    { name: "BreakFast", value: 0 },
+    { name: "Breakfast", value: 0 },
     { name: "Lunch", value: 0 },
     { name: "Dinner", value: 0 },
     { name: "Snacks", value: 0 },
@@ -44,7 +44,7 @@ export const useUserLogsStore = create((set, get) => ({
     } catch (error) {
       set({ logsLoading: false });
       throw new Error(
-        "Could not fetch user data or there are user logs for today..."
+        "Could not fetch user data or there are user logs for today...",
       );
     }
   },
@@ -61,7 +61,7 @@ export const useUserLogsStore = create((set, get) => ({
     };
 
     const newMealCalories = [
-      { name: "BreakFast", value: 0 },
+      { name: "Breakfast", value: 0 },
       { name: "Lunch", value: 0 },
       { name: "Dinner", value: 0 },
       { name: "Snacks", value: 0 },
@@ -87,7 +87,7 @@ export const useUserLogsStore = create((set, get) => ({
       const res = await deleteUserLogsFood(foodToDelete);
       set((state) => ({
         todaysFoods: state.todaysFoods.filter(
-          (food) => food._id !== foodToDelete._id
+          (food) => food._id !== foodToDelete._id,
         ),
       }));
       get().updateTodayMacros();
@@ -118,6 +118,8 @@ export const useUserLogsStore = create((set, get) => ({
       if upload fails then postFood() throws Error() and catch fetches the food logs from the DB
       To rollback to the correct state. (Correct state == state of the DB)
     */
+
+    console.log("foodToUpload", foodToUpload);
     try {
       const res = await postFood(foodToUpload, "/foods/userlogs");
       console.log(res.message);

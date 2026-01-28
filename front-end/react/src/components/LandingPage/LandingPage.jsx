@@ -32,7 +32,7 @@ export default function LandingPage() {
           <a href="#features-section">Features</a>
           <a href="#devices-section">Devices</a>
         </nav>
-        <button onClick={() => window.open("./app/login", "_self")}>
+        <button onClick={() => window.open("./auth/login", "_self")}>
           Get Started
         </button>
       </header>
@@ -47,7 +47,7 @@ export default function LandingPage() {
             Your Personal <span>Nutrition Companion</span>
           </h1>
           <p>Track calories, monitor macros, and achieve your fitness goals.</p>
-          <button onClick={() => window.open("./app/login", "_self")}>
+          <button onClick={() => window.open("./auth/login", "_self")}>
             Start Here
             <ArrowRight />
           </button>

@@ -31,7 +31,7 @@ export default function FoodsPanel({ mealTypeSelected, filteredFoods }) {
   function handleFoodAddition(e, foodObj) {
     //console.log(foodObj);
     e.stopPropagation();
-
+    console.log(mealTypeSelected);
     handleAddFood(foodObj, Number(foodCardInput), mealTypeSelected);
     setSelectedFood(null);
     setFoodCardInput("");

@@ -54,11 +54,8 @@ export default function OnBoarding() {
       // Validate Form Values
       schemaRequired.validateSync(formInputsClone, { abortEarly: false });
 
-      // Send request to back-end VIA userStore "updateInfo()"
       await updateInfo(formInputsClone);
 
-      // Navigate user to his custom plan
-      console.log("object");
       navigate("./plan", { replace: true });
     } catch (error) {
       // Show multiple toasts if multiple validation errors occur

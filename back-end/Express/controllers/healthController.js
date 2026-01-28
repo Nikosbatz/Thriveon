@@ -99,6 +99,9 @@ async function getUserWeightLogs(req, res) {
   }
 }
 
+/* 
+Updates the weight in the FoodLog and User documents
+ */
 async function postUserWeightLog(req, res) {
   const userId = req.userId;
   const currentDate = new Date().toISOString().split("T")[0];
@@ -106,6 +109,7 @@ async function postUserWeightLog(req, res) {
   const weight = body.weight;
 
   try {
+    // Update the FoodLog Document
     let logs = await FoodLog.findOneAndUpdate(
       {
         userId: userId,
@@ -114,6 +118,24 @@ async function postUserWeightLog(req, res) {
       { $set: { "logs.$.weight": weight } },
       { new: true }
     );
+
+    console.log("weight: ", weight);
+    // console.log("logs: ", logs);
+    // Update the User Document
+    const userDocWeight = await User.findOneAndUpdate(
+      {
+        _id: userId,
+      },
+      { $set: { weight: weight } },
+      { new: true }
+    );
+
+    console.log("userDocWeight: ", userDocWeight);
+
+    // If user doesnt exist throw error
+    if (!userDocWeight) {
+      throw new Error();
+    }
 
     // if a log for the current date and userId exists and the $set is successful
     if (logs) {
@@ -145,10 +167,10 @@ async function postUserWeightLog(req, res) {
     }
     // if query failed then userId doenst exist
     else {
-      return res.status(404).json({ message: "userId doenst exist" });
+      throw new Error();
     }
   } catch (error) {
-    res.json({ message: "error" });
+    return res.status(404).json({ message: "userId doenst exist" });
   }
 }
 

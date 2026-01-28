@@ -40,17 +40,13 @@ console.log(process.env.NODE_ENV === "production");
 
 // PRODUCTION MODE ONLY
 if (process.env.NODE_ENV === "production") {
-  console.log(
-    "Static folder path:",
-    path.join(__dirname, "../../front-end/react/build")
-  );
   app.use(express.static(path.join(__dirname, "../../front-end/react/build")));
 
   app.get(/(.*)/, (req, res) => {
     res.sendFile(
-      path.resolve(__dirname, "../../front-end/react/build/index.html")
+      path.resolve(__dirname, "../../front-end/react/build/index.html"),
     );
   });
 }
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Serve listening on port ${port}!`));
