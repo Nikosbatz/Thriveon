@@ -5,6 +5,7 @@ import {
   VERIFICATION_EMAIL_TEMPLATE,
   PASSWORD_RESET_REQUEST_TEMPLATE,
   PASSWORD_RESET_SUCCESS_TEMPLATE,
+  PASSWORD_RESET_REQUEST_TEMPLATE_MOBILE,
 } from "./emailTemplates.js";
 
 export async function sendVerificationEmail(userEmail, verificationToken) {
@@ -22,7 +23,7 @@ export async function sendVerificationEmail(userEmail, verificationToken) {
   message.to = [{ email: userEmail }];
   message.htmlContent = VERIFICATION_EMAIL_TEMPLATE.replace(
     "{VERIFICATION_TOKEN}",
-    verificationToken
+    verificationToken,
   );
 
   try {
@@ -30,15 +31,12 @@ export async function sendVerificationEmail(userEmail, verificationToken) {
     console.log("Mail Sent Successfully");
     return { success: true };
   } catch (error) {
-    console.error(
-      "Email sending error:",
-      error.response?.body || error.message
-    );
+    console.error("Email sending error:", error);
     throw new Error("Email sending failed");
   }
 }
 
-export async function sendPasswordResetEmail(userEmail, resetToken) {
+export async function sendPasswordResetEmail(userEmail, resetToken, platform) {
   console.log("SEND PASSWORD RESET EMAIL");
   let emailAPI = new TransactionalEmailsApi();
   emailAPI.authentications.apiKey.apiKey = process.env.BREVO_API_TOKEN;
@@ -57,11 +55,23 @@ export async function sendPasswordResetEmail(userEmail, resetToken) {
     email: "nikosbatznanas@gmail.com",
     name: "ThriveOn",
   };
-  message.to = [{ email: userEmail }];
-  message.htmlContent = PASSWORD_RESET_REQUEST_TEMPLATE.replace(
-    "{resetURL}",
-    URI
-  );
+
+  // if platform is DESKTOP
+  if (!platform) {
+    message.to = [{ email: userEmail }];
+    message.htmlContent = PASSWORD_RESET_REQUEST_TEMPLATE.replace(
+      "{resetURL}",
+      URI,
+    );
+  }
+  // else if platform is MOBILE
+  else {
+    message.to = [{ email: userEmail }];
+    message.htmlContent = PASSWORD_RESET_REQUEST_TEMPLATE_MOBILE.replace(
+      "{RESET_TOKEN}",
+      resetToken,
+    );
+  }
 
   try {
     const res = await emailAPI.sendTransacEmail(message);

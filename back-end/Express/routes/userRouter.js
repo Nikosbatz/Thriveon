@@ -25,6 +25,6 @@ userRouter.use(authenticateToken);
 
 userRouter.get("/info", getInfo);
 userRouter.post("/update-info", updateInfo);
-userRouter.post("/auth", authToken);
+userRouter.get("/auth", authToken);
 
 module.exports = userRouter;

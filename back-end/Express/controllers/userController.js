@@ -29,7 +29,7 @@ async function createUser(req, res) {
 
     // createi verification token
     const verificationToken = Math.floor(
-      100000 + Math.random() * 900000
+      100000 + Math.random() * 900000,
     ).toString();
 
     // Try to send verification email
@@ -37,7 +37,7 @@ async function createUser(req, res) {
     try {
       const emailResult = await sendVerificationEmail(
         userData.email,
-        verificationToken
+        verificationToken,
       );
     } catch (error) {
       //catch the cannot send email error
@@ -62,7 +62,6 @@ async function createUser(req, res) {
 
     res.status(201).json({ message: "Successful register" });
   } catch (err) {
-    console.log("catch: User could not be created!");
     res.status(409).json({ message: "Error 409\nUser could not be created!" });
   }
 }
@@ -92,7 +91,6 @@ async function verifyUser(req, res) {
     // return OK status
     return res.status(200).json({ accessToken: token });
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ message: "User couldnt be verified " });
   }
 }
@@ -100,13 +98,15 @@ async function verifyUser(req, res) {
 async function sendVerificationCode(req, res) {
   const userEmail = req.body.email;
 
+  console.log("userEmail", userEmail);
+
   try {
     const user = await User.findOne({ email: userEmail });
 
     if (!user) return res.status(401).json({ message: "User not found" });
 
     const verificationToken = Math.floor(
-      100000 + Math.random() * 900000
+      100000 + Math.random() * 900000,
     ).toString();
 
     user.verificationToken = verificationToken;
@@ -115,7 +115,7 @@ async function sendVerificationCode(req, res) {
 
     const emailResult = await sendVerificationEmail(
       userEmail,
-      verificationToken
+      verificationToken,
     );
   } catch (error) {
     res.status(400).json({ message: "Could not send email to user" });
@@ -146,39 +146,73 @@ async function loginUser(req, res) {
 
     const token = generateAccessToken(user._id);
 
-    res.status(200).json({ accessToken: token, isVerified: user.isVerified });
+    // Remove sensitive info from the user object
+    const { __v, password, mfa, ...safeUser } = user._doc;
+
+    res.status(200).json({
+      accessToken: token,
+      isVerified: user.isVerified,
+      user: safeUser,
+    });
   } catch (error) {}
 }
 
 async function forgotPassword(req, res) {
-  const { email } = req.body;
+  const { email, platform } = req.body;
 
-  console.log("FORGORT PASSWORD");
+  // If platform is DESKTOP (platform === undefined for desktop)
+  if (!platform) {
+    try {
+      // Find User by Email
+      const user = await User.findOne({ email: email });
 
-  try {
-    // Find User by Email
-    const user = await User.findOne({ email: email });
+      if (!user) {
+        return res.status(400).json({ message: "User not Found" });
+      }
 
-    if (!user) {
-      return res.status(400).json({ message: "User not Found" });
+      // Create Reset Token. Expires in 1 Hour
+      const resetToken = crypto.randomBytes(20).toString("hex");
+      const tokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
+
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordTokenExpiresAt = tokenExpiresAt;
+      await user.save();
+
+      // Send a url with the resetToken to the User's Email
+      sendPasswordResetEmail(email, resetToken);
+
+      res
+        .status(200)
+        .json({ message: "Password Reset Email was sent to the user!" });
+    } catch (error) {
+      res.status(400);
     }
+  }
+  // Else if platform === "mobile"
+  else {
+    //TODO: change email template for mobile platform
+    try {
+      const user = await User.findOne({ email: email });
 
-    // Create Reset Token. Expires in 1 Hour
-    const resetToken = crypto.randomBytes(20).toString("hex");
-    const tokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
+      if (!user) {
+        return res.status(400).json({ message: "User not Found" });
+      }
 
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordTokenExpiresAt = tokenExpiresAt;
-    await user.save();
+      const resetToken = Math.floor(100000 + Math.random() * 900000).toString();
+      const tokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordTokenExpiresAt = tokenExpiresAt;
+      await user.save();
 
-    // Send a url with the resetToken to the User's Email
-    sendPasswordResetEmail(email, resetToken);
+      // Send a url with the resetToken to the User's Email
+      sendPasswordResetEmail(email, resetToken, platform);
 
-    res
-      .status(200)
-      .json({ message: "Password Reset Email was sent to the user!" });
-  } catch (error) {
-    res.status(400);
+      res
+        .status(200)
+        .json({ message: "Password Reset Email was sent to the user!" });
+    } catch (error) {
+      res.status(400);
+    }
   }
 }
 
@@ -208,14 +242,12 @@ async function resetPassword(req, res) {
 
     res.status(200).json({ message: "Succesful Password Reset!" });
   } catch (error) {
-    console.log("Error in resetPassword func: ", error);
     res.status(400).json({ message: error.message });
   }
 }
 
 async function getInfo(req, res) {
   const userId = req.userId;
-  console.log("userid: ", userId);
 
   try {
     const user = await User.findOne({ _id: userId });
@@ -235,8 +267,6 @@ async function getInfo(req, res) {
 async function updateInfo(req, res) {
   const userId = req.userId;
   const body = req.body;
-
-  console.log(body);
 
   body.onBoardingCompleted = true;
   const allowedFields = [
@@ -264,7 +294,7 @@ async function updateInfo(req, res) {
     const user = await User.findByIdAndUpdate(
       { _id: userId },
       { $set: updates },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!user) {
@@ -272,7 +302,6 @@ async function updateInfo(req, res) {
     }
 
     const { password, ...safeUser } = user._doc;
-    console.log(safeUser);
     res.status(200).json({ ...safeUser });
   } catch (error) {
     res.status(500).send();
@@ -281,6 +310,7 @@ async function updateInfo(req, res) {
 
 // authMiddleware is used before this function
 async function authToken(req, res) {
+  console.log("authToken");
   res.status(200).send();
 }
 
