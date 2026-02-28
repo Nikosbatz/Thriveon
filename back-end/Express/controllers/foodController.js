@@ -1,4 +1,5 @@
 const Food = require("../models/food.model.js");
+const BarcodeFood = require("../models/barcodeFood.model.js");
 const FoodLog = require("../models/foodLog.model.js");
 
 async function getFoods(req, res) {
@@ -64,7 +65,7 @@ async function getUserFoods(req, res) {
         userId: userId,
         "logs.date": currentDate,
       },
-      { "logs.$": 1 }
+      { "logs.$": 1 },
     );
 
     console.log(logs);
@@ -121,7 +122,7 @@ async function logUserFood(req, res) {
           },
         },
       },
-      { new: true }
+      { new: true },
     );
 
     if (newObject) {
@@ -149,7 +150,7 @@ async function logUserFood(req, res) {
             },
           },
         },
-        { new: true }
+        { new: true },
       );
 
       //console.log(newObject);
@@ -183,7 +184,7 @@ async function deleteUserLogsFood(req, res) {
     // and pull the object with _id == foodId from the foods array
     const query = await FoodLog.updateOne(
       { userId: userId, "logs.date": currentDate },
-      { $pull: { "logs.$.foods": { _id: foodId } } }
+      { $pull: { "logs.$.foods": { _id: foodId } } },
     );
 
     console.log("-------", query, "-------");
@@ -219,6 +220,21 @@ async function getUserLogsFood(req, res) {
     res.status(404).json({ message: "asdasd" });
   }
 }
+
+async function getBarcodeFood(req, res) {
+  const code = req.params.id;
+  console.log(code);
+  try {
+    const query = await BarcodeFood.find({
+      code: code,
+    });
+    console.log(query);
+    res.status(200).json(query[0]);
+  } catch (err) {
+    res.status(404).json({ message: "Could not find requested food" });
+  }
+}
+
 //-------- --------//
 module.exports = {
   getFoods,
@@ -228,4 +244,5 @@ module.exports = {
   updateFood,
   logUserFood,
   getUserFoods,
+  getBarcodeFood,
 };

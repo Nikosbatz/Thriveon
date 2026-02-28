@@ -6,6 +6,7 @@ const {
   updateFood,
   logUserFood,
   getUserFoods,
+  getBarcodeFood,
 } = require("../controllers/foodController.js");
 const authenticateToken = require("../middleware/authMiddleware.js");
 const express = require("express");
@@ -17,6 +18,8 @@ foodRouter.use(authenticateToken);
 foodRouter.get("/", getFoods);
 
 foodRouter.post("/", createFood);
+
+foodRouter.get("/barcode/:id", getBarcodeFood);
 
 foodRouter.post("/userlogs", logUserFood);
 
