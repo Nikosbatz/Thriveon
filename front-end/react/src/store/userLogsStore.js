@@ -6,6 +6,7 @@ export const useUserLogsStore = create((set, get) => ({
   foodsLoading: true,
   foods: [],
   todaysFoods: [],
+  foodHistory: [],
   todaysMacros: {
     calories: 0,
     protein: 0,
@@ -37,8 +38,8 @@ export const useUserLogsStore = create((set, get) => ({
   getTodayFoods: async () => {
     set({ logsLoading: true });
     try {
-      const todaysFoods = await getFoods("/foods/userlogs");
-      set({ todaysFoods });
+      const { data, foodHistory } = await getFoods("/foods/userlogs");
+      set({ todaysFoods: data, foodHistory: foodHistory });
       get().updateTodayMacros();
       set({ logsLoading: false });
     } catch (error) {

@@ -51,9 +51,8 @@ async function updateFood(req, res) {
   }
 }
 
-// returns all the foods of the current date that user has logged
+// returns all the foods of the current date that user has logged and the food history
 async function getUserFoods(req, res) {
-  // userId is passed from authMiddleware
   const userId = req.userId;
 
   const currentDate = new Date().toISOString().split("T")[0];
@@ -65,12 +64,13 @@ async function getUserFoods(req, res) {
         userId: userId,
         "logs.date": currentDate,
       },
-      { "logs.$": 1 },
+      { "logs.$": 1, foodHistory: 1 },
     );
 
-    console.log(logs);
     if (logs) {
-      res.status(200).json(logs.logs[0].foods);
+      res
+        .status(200)
+        .json({ data: logs.logs[0].foods, foodHistory: logs.foodHistory });
     } else {
       throw new Error("Couldn't fetch user logs...");
     }
@@ -96,41 +96,60 @@ async function getUserFoods(req, res) {
     "mealType": "BreakFast"
 }
 */
-async function logUserFood(req, res) {
-  data = req.body;
-  const userId = req.userId;
 
+// TODO: When deleting food from the foodLogs also delete if from foodHistory (Maybe use the _id of the logs.food _id in the
+//  foodHistory object to map the correct object on the foodHistory on delete)
+
+async function logUserFood(req, res) {
+  const data = req.body;
+  const userId = req.userId;
   const currentDate = new Date().toISOString().split("T")[0];
 
-  console.log(req.body);
-
-  let newObject = null;
-  // Try to add the food to an EXISTING LOG with the current date
+  let logs = null;
   try {
-    newObject = await FoodLog.findOneAndUpdate(
+    // Query to get foodHistory
+    const queryResult = await FoodLog.findOne(
+      {
+        userId: userId,
+      },
+      { foodHistory: 1 },
+    );
+
+    // Dont allow duplicates in foodhistory
+    // Duplicate is defined as same name and same quantity
+    foodExistsInHistory = queryResult.foodHistory.find(
+      (food) => food.name === data.name && food.quantity === data.quantity,
+    );
+
+    // Define an object representing the query regarding foodHistory
+    // if food exists in foodHistory object remains empty and query does nothing
+    const foodHistoryInsertQuery = {};
+    if (!foodExistsInHistory) {
+      foodHistoryInsertQuery.foodHistory = { $each: [data], $position: 0 };
+    }
+
+    logs = await FoodLog.findOneAndUpdate(
       { userId: userId, "logs.date": currentDate },
       {
         $push: {
           "logs.$.foods": {
-            name: data.name,
-            grams: data.grams,
-            calories: data.calories,
-            protein: data.protein,
-            carbs: data.carbs,
-            fats: data.fats,
-            mealType: data.mealType,
+            ...data,
           },
+          ...foodHistoryInsertQuery,
         },
       },
       { new: true },
     );
 
-    if (newObject) {
-      res.status(200).json({ message: newObject.logs.at(-1).foods });
+    if (logs) {
+      res.status(200).json({
+        message: logs.logs.at(-1).foods,
+        foodHistory: logs.foodHistory,
+      });
     }
     // If a log with current date DOESNT EXIST create a new one (append in the logs array)
     else {
-      newObject = await FoodLog.findOneAndUpdate(
+      logs = await FoodLog.findOneAndUpdate(
         { userId: userId },
         {
           $push: {
@@ -138,25 +157,25 @@ async function logUserFood(req, res) {
               date: currentDate,
               foods: [
                 {
-                  name: data.name,
-                  grams: data.grams,
-                  calories: data.calories,
-                  protein: data.protein,
-                  carbs: data.carbs,
-                  fats: data.fats,
-                  mealType: data.mealType,
+                  ...data,
                 },
               ],
+            },
+            // Push at the start of the array the new object
+            foodHistory: {
+              $each: [data],
+              $position: 0,
             },
           },
         },
         { new: true },
       );
 
-      //console.log(newObject);
-
-      if (newObject) {
-        res.status(201).json({ message: newObject.logs.at(-1).foods });
+      if (logs) {
+        res.status(201).json({
+          message: logs.logs.at(-1).foods,
+          foodHistory: logs.foodHistory,
+        });
       } else {
         throw new Error();
       }
@@ -168,16 +187,11 @@ async function logUserFood(req, res) {
 }
 //-------- --------//
 
-/* 
-if it returns status == 200 delete successful
-else if status == 500 then delete failed
-*/
 async function deleteUserLogsFood(req, res) {
   const foodId = req.params.id;
   const userId = req.userId;
-  //console.log("DELETE FOOD: " + foodId);
+  console.log(foodId);
   const currentDate = new Date().toISOString().split("T")[0];
-  //console.log(currentDate);
 
   try {
     // Find the document with the userId and log with currentDate
@@ -186,8 +200,6 @@ async function deleteUserLogsFood(req, res) {
       { userId: userId, "logs.date": currentDate },
       { $pull: { "logs.$.foods": { _id: foodId } } },
     );
-
-    console.log("-------", query, "-------");
 
     if (query.acknowledged === true) {
       res
@@ -199,25 +211,6 @@ async function deleteUserLogsFood(req, res) {
   } catch (err) {
     console.log("Delete Failed");
     res.status(500).json({ message: err });
-  }
-}
-
-// This was used to test how the query works
-async function getUserLogsFood(req, res) {
-  const foodId = req.params.id;
-  const userId = req.userId;
-  const currentDate = new Date().toISOString().split("T")[0];
-
-  try {
-    const query = await FoodLog.find({
-      userId: userId,
-      "logs.date": currentDate,
-      "logs.foods._id": foodId,
-    });
-
-    res.json({ message: query });
-  } catch (err) {
-    res.status(404).json({ message: "asdasd" });
   }
 }
 
@@ -235,14 +228,36 @@ async function getBarcodeFood(req, res) {
   }
 }
 
+async function getSearchFoods(req, res) {
+  const searchInput = req.params.id;
+
+  console.log(searchInput);
+
+  if (typeof searchInput !== "string") {
+    return res.status(400).json({ error: "Invalid input" });
+  }
+
+  try {
+    const searchResult = await BarcodeFood.find(
+      { $text: { $search: searchInput } },
+      { score: { $meta: "textScore" } },
+    )
+      .sort({ score: { $meta: "textScore" } })
+      .limit(30);
+    res.status(200).json({ data: searchResult });
+  } catch (error) {
+    res.status(500).send();
+  }
+}
+
 //-------- --------//
 module.exports = {
   getFoods,
   createFood,
   deleteUserLogsFood,
-  getUserLogsFood,
   updateFood,
   logUserFood,
   getUserFoods,
   getBarcodeFood,
+  getSearchFoods,
 };

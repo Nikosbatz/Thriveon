@@ -191,11 +191,13 @@ async function forgotPassword(req, res) {
   // Else if platform === "mobile"
   else {
     //TODO: change email template for mobile platform
+
+    console.log("asdasda");
     try {
       const user = await User.findOne({ email: email });
 
       if (!user) {
-        return res.status(400).json({ message: "User not Found" });
+        return res.status(404).json({ message: "User not Found" });
       }
 
       const resetToken = Math.floor(100000 + Math.random() * 900000).toString();

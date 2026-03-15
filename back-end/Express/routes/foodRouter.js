@@ -7,6 +7,7 @@ const {
   logUserFood,
   getUserFoods,
   getBarcodeFood,
+  getSearchFoods,
 } = require("../controllers/foodController.js");
 const authenticateToken = require("../middleware/authMiddleware.js");
 const express = require("express");
@@ -19,16 +20,14 @@ foodRouter.get("/", getFoods);
 
 foodRouter.post("/", createFood);
 
+foodRouter.get("/search/:id", getSearchFoods);
+
 foodRouter.get("/barcode/:id", getBarcodeFood);
 
 foodRouter.post("/userlogs", logUserFood);
 
 foodRouter.get("/userlogs", getUserFoods);
 
-// maybe redundant
 foodRouter.delete("/userlogs/:id", deleteUserLogsFood);
-foodRouter.get("/userlogs/:id", getUserLogsFood);
-foodRouter.put("/:id", updateFood);
-//------
 
 module.exports = foodRouter;

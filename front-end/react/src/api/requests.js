@@ -168,7 +168,7 @@ export async function postUserInfo(info) {
     return await res.json();
   } else {
     throw new Error(
-      "Something went wrong. If the error persists please contact support"
+      "Something went wrong. If the error persists please contact support",
     );
   }
 }
@@ -197,8 +197,6 @@ export async function getFoods(path) {
   path = "/foods/userlogs" to fetch the User's food logs (Today currently...)
   */
 
-  console.log("GETFOODS");
-
   const options = {
     method: "GET",
     headers: {
@@ -207,11 +205,8 @@ export async function getFoods(path) {
   };
   const res = await fetchWrapper(`${BASE_URI}${path}`, options);
 
-  console.log("res: ", res);
-
   if (res.ok) {
     const data = await res.json();
-    //console.log(data);
     return data;
   } else {
     // Throws when food logs array is empty
@@ -238,7 +233,7 @@ export async function postFood(data, path) {
     return res.json();
   } else if (res.status === 409) {
     throw new Error(
-      `Error: ${res.status}\nAn Item with this name already exists! `
+      `Error: ${res.status}\nAn Item with this name already exists! `,
     );
   }
 }
