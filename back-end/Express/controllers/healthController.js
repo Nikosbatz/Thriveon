@@ -11,17 +11,17 @@ async function getUserWaterLog(req, res) {
         userId: userId,
         "logs.date": currentDate,
       },
-      { "logs.$": 1 }
+      { "logs.$": 1 },
     );
+    console.log(logs);
 
     // if a water logs exists then return the amount
     if (logs) {
-      //console.log(logs);
       return res.json({ water: logs.logs[0].water });
     }
     // else send "Error 404"
     else {
-      res.status(404).send();
+      res.status(200).json({ water: 0 });
     }
   } catch (err) {
     /*if logs for userId and currentDate doesnt exist then throw "Error 404"*/
@@ -41,7 +41,7 @@ async function postUserWaterLog(req, res) {
         "logs.date": currentDate,
       },
       { $set: { "logs.$.water": water } },
-      { new: true }
+      { new: true },
     );
     // if a log for the current date and userId exists and the $set is successful
     if (logs) {
@@ -58,7 +58,7 @@ async function postUserWaterLog(req, res) {
               water: water,
             },
           },
-        }
+        },
       );
     }
     // if a new object is created in logs array and the water field is $set successfully
@@ -116,7 +116,7 @@ async function postUserWeightLog(req, res) {
         "logs.date": currentDate,
       },
       { $set: { "logs.$.weight": weight } },
-      { new: true }
+      { new: true },
     );
 
     console.log("weight: ", weight);
@@ -127,7 +127,7 @@ async function postUserWeightLog(req, res) {
         _id: userId,
       },
       { $set: { weight: weight } },
-      { new: true }
+      { new: true },
     );
 
     console.log("userDocWeight: ", userDocWeight);
@@ -158,7 +158,7 @@ async function postUserWeightLog(req, res) {
               weight: weight,
             },
           },
-        }
+        },
       );
     }
     // if a new object is created in logs array and the weight field is $set successfully

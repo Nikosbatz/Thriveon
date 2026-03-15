@@ -5,7 +5,7 @@ const loggedFoodSchema = new mongoose.Schema(
   {
     foodId: { type: mongoose.Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
-    quantity: { type: Number, required: true },
+    loggedQuantity: { type: Number, required: true },
     grams: { type: Number, required: true },
     calories: { type: Number, required: true },
     protein: { type: Number, required: true },

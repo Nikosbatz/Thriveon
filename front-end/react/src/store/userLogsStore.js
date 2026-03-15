@@ -103,9 +103,10 @@ export const useUserLogsStore = create((set, get) => ({
     const fats = Math.round((food.fats / food.grams) * gramsInput);
 
     const foodToUpload = {
-      name: food.name,
+      ...food,
       calories: calories,
       grams: gramsInput,
+      loggedQuantity: gramsInput,
       protein: protein,
       carbs: carbs,
       fats: fats,

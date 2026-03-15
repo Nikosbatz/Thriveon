@@ -54,12 +54,10 @@ async function updateFood(req, res) {
 // returns all the foods of the current date that user has logged and the food history
 async function getUserFoods(req, res) {
   const userId = req.userId;
-
   const currentDate = new Date().toISOString().split("T")[0];
-  console.log(currentDate);
 
   try {
-    const logs = await FoodLog.findOne(
+    let logs = await FoodLog.findOne(
       {
         userId: userId,
         "logs.date": currentDate,
@@ -72,7 +70,8 @@ async function getUserFoods(req, res) {
         .status(200)
         .json({ data: logs.logs[0].foods, foodHistory: logs.foodHistory });
     } else {
-      throw new Error("Couldn't fetch user logs...");
+      logs = await FoodLog.find({ userId: userId }, { foodHistory: 1 });
+      res.status(200).json({ foodHistory: logs[0].foodHistory, data: [] });
     }
   } catch (err) {
     console.log(err);
@@ -125,7 +124,11 @@ async function logUserFood(req, res) {
     // if food exists in foodHistory object remains empty and query does nothing
     const foodHistoryInsertQuery = {};
     if (!foodExistsInHistory) {
-      foodHistoryInsertQuery.foodHistory = { $each: [data], $position: 0 };
+      foodHistoryInsertQuery.foodHistory = {
+        $each: [data],
+        $position: 0,
+        $slice: 20, // Keep only the 20 most recent entries in foodHistory
+      };
     }
 
     logs = await FoodLog.findOneAndUpdate(
