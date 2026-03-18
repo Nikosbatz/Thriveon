@@ -141,7 +141,7 @@ svg {
 }
 
 html {
-  overflow-y: scroll;
+  /* overflow-y: hidden; */
 }
 
 body {
@@ -325,27 +325,38 @@ body.no-scroll {
   flex-direction: column;
   align-items: center;
   gap: 2em;
-  background: radial-gradient(
+  background:
+    radial-gradient(
       circle at 10% 40%,
       var(--lv-primary-20) 0%,
       transparent 20%
     ),
     radial-gradient(circle at 80% 20%, var(--lv-primary-20) 0%, transparent 30%);
-  background-size: 150% 150%, 150% 150%;
-  background-position: 25% 55%, 100% 25%;
+  background-size:
+    150% 150%,
+    150% 150%;
+  background-position:
+    25% 55%,
+    100% 25%;
 
   animation: moveBlobs 15s ease-in-out infinite alternate;
 }
 
 @keyframes moveBlobs {
   0% {
-    background-size: 100% 100%, 100% 100%;
+    background-size:
+      100% 100%,
+      100% 100%;
   }
   50% {
-    background-size: 200% 200%, 200% 200%;
+    background-size:
+      200% 200%,
+      200% 200%;
   }
   100% {
-    background-size: 100% 100%, 100% 100%;
+    background-size:
+      100% 100%,
+      100% 100%;
   }
 }
 
@@ -726,7 +737,9 @@ body.no-scroll {
   inset: 0;
   padding: 0px; /* border thickness */
   border-radius: inherit;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
@@ -810,7 +823,9 @@ body.no-scroll {
   box-shadow: 0px 2px 2px rgb(45, 45, 45);
   margin-bottom: 3px;
   outline: 0px solid black;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .tracker-search:focus {
@@ -919,8 +934,18 @@ body.no-scroll {
   height: 100%;
   outline: none;
   border: none;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif;
   font-weight: 600;
   font-size: 1em;
   background-color: rgba(255, 255, 255, 0);
@@ -982,7 +1007,9 @@ body.no-scroll {
   z-index: 1;
   opacity: 0;
   transform: translateY(0px) scale(0.3);
-  transition: opacity 0.2s ease, transform 0.3s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.3s ease;
 }
 
 .food-info-card.show {
@@ -1008,7 +1035,9 @@ body.no-scroll {
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   outline: none;
-  transition: box-shadow 0.2s, border-color 0.2s;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 
 .food-info-card button {
@@ -1022,7 +1051,9 @@ body.no-scroll {
   color: white;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.3s;
+  transition:
+    background-color 0.2s,
+    transform 0.3s;
   box-shadow: 0px 3px 5px var(--box-shadow);
 }
 
@@ -1435,7 +1466,8 @@ body.no-scroll {
     linear-gradient(to top, rgba(19, 18, 18, 0.08), rgba(255, 255, 255, 0));*/
 
   /* Slight inner + outer shadow for depth */
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.1),
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.1),
     /* top shine */ inset 0 -1px rgba(0, 0, 0, 0.5),
     /* bottom shading */ 0 4px 20px rgba(0, 0, 0, 0.6); /* drop shadow */
 }
@@ -3313,8 +3345,6 @@ body.no-scroll {
   width: 100vw;
   height: 100vh;
   max-height: 100vh;
-  padding: 0;
-  margin: 0;
   position: absolute;
   background: url(../public/assets/gym_background.jpg);
   background-size: cover;
@@ -3322,6 +3352,7 @@ body.no-scroll {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-y: scroll;
 }
 
 .login-page-body h1 {
@@ -3351,7 +3382,7 @@ body.no-scroll {
 
 @keyframes fade-in-login {
   0% {
-    transform: translateY(100%);
+    transform: translateY(40%);
   }
   100% {
     transform: translateY(0%);
@@ -4252,7 +4283,8 @@ body.no-scroll {
   width: 100%;
   height: 100%;
   transition: all 0.6s ease;
-  background-image: linear-gradient(
+  background-image:
+    linear-gradient(
       90deg,
       rgba(79, 79, 79, 0) 0%,
       rgba(34, 42, 60, 0.8) 50%,
@@ -4261,14 +4293,22 @@ body.no-scroll {
     var(--avatar), var(--title), var(--subtitle), var(--button), var(--button),
     var(--card);
 
-  background-size: var(--blur-size), var(--avatar-size) var(--avatar-size),
+  background-size:
+    var(--blur-size),
+    var(--avatar-size) var(--avatar-size),
     var(--title-width) var(--title-height),
     var(--subtitle-width) var(--subtitle-height),
     var(--button-1-width) var(--button-height),
-    var(--button-2-width) var(--button-height), 100% 100%;
+    var(--button-2-width) var(--button-height),
+    100% 100%;
 
-  background-position: -150% 0, var(--avatar-position), var(--title-position),
-    var(--subtitle-position), var(--button-1-position), var(--button-2-position),
+  background-position:
+    -150% 0,
+    var(--avatar-position),
+    var(--title-position),
+    var(--subtitle-position),
+    var(--button-1-position),
+    var(--button-2-position),
     0 0;
 
   background-repeat: no-repeat;
@@ -4277,9 +4317,14 @@ body.no-scroll {
 
 @keyframes loading {
   to {
-    background-position: 350% 0, var(--avatar-position), var(--title-position),
-      var(--subtitle-position), var(--button-1-position),
-      var(--button-2-position), 0 0;
+    background-position:
+      350% 0,
+      var(--avatar-position),
+      var(--title-position),
+      var(--subtitle-position),
+      var(--button-1-position),
+      var(--button-2-position),
+      0 0;
   }
 }
 /* ------ DASHBOARD-CARD-SKELETON BREAKPOINTS ------ */
@@ -4373,7 +4418,9 @@ body.no-scroll {
 }
 .line {
   fill: none;
-  transition: stroke-dasharray 400ms, stroke-dashoffset 400ms;
+  transition:
+    stroke-dasharray 400ms,
+    stroke-dashoffset 400ms;
   stroke: white;
   stroke-width: 5;
   stroke-linecap: round;
@@ -4389,7 +4436,9 @@ body.no-scroll {
 .ham8 .bottom {
   stroke-dasharray: 40 85;
   transform-origin: 50%;
-  transition: transform 400ms, stroke-dashoffset 400ms;
+  transition:
+    transform 400ms,
+    stroke-dashoffset 400ms;
 }
 .ham8.active .top {
   stroke-dashoffset: -64px;

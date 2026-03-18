@@ -16,7 +16,6 @@ import AnimatedCard from "./AnimatedCard";
 import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
-  const navigate = useNavigate();
   return (
     <div className="landing-page-root">
       <header className="landing-page-header">

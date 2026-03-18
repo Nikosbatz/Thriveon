@@ -24,7 +24,7 @@ export default function Login() {
     try {
       const res = await login(
         loginForm.email.toLowerCase(),
-        loginForm.password
+        loginForm.password,
       );
       setUserEmail(loginForm.email.toLowerCase());
 

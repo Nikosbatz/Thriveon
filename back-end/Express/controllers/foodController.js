@@ -247,6 +247,8 @@ async function getSearchFoods(req, res) {
     )
       .sort({ score: { $meta: "textScore" } })
       .limit(30);
+
+    console.log(searchResult);
     res.status(200).json({ data: searchResult });
   } catch (error) {
     res.status(500).send();

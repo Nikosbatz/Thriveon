@@ -83,5 +83,5 @@ root.render(
   <React.StrictMode>
     <RouterProvider router={router} />
     <Toaster />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
