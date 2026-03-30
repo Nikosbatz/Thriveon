@@ -127,6 +127,8 @@ async function loginUser(req, res) {
   const userEmail = userData.email;
   const userPass = userData.password;
 
+  console.log(userData);
+
   try {
     // Check if user exists
     const user = await User.findOne({ email: userEmail });

@@ -121,7 +121,7 @@ async function logUserFood(req, res) {
     );
 
     // Define an object representing the query regarding foodHistory
-    // if food exists in foodHistory object remains empty and query does nothing
+    // if food exists in foodHistory, object remains empty and query does nothing
     const foodHistoryInsertQuery = {};
     if (!foodExistsInHistory) {
       foodHistoryInsertQuery.foodHistory = {
@@ -241,15 +241,41 @@ async function getSearchFoods(req, res) {
   }
 
   try {
-    const searchResult = await BarcodeFood.find(
+    const usdaSearchResult = await Food.find(
       { $text: { $search: searchInput } },
       { score: { $meta: "textScore" } },
     )
       .sort({ score: { $meta: "textScore" } })
-      .limit(30);
+      .limit(30)
+      .lean();
+    const barcodeSearchResult = await BarcodeFood.find(
+      { $text: { $search: searchInput } },
+      { score: { $meta: "textScore" } },
+    )
+      .sort({ score: { $meta: "textScore" } })
+      .limit(30)
+      .lean();
 
-    console.log(searchResult);
-    res.status(200).json({ data: searchResult });
+    // Adds Weights to the results to give priority to USDA foods over Barcode products
+    const usdaWithWeight = usdaSearchResult.map((item) => ({
+      ...item,
+      adjustedScore: (item.score || 0) + 1.5,
+    }));
+
+    const barcodeWithWeight = barcodeSearchResult.map((item) => ({
+      ...item,
+      adjustedScore: item.score || +0,
+    }));
+    const searchResult = [...usdaWithWeight, ...barcodeWithWeight];
+    searchResult.sort((a, b) => b.adjustedScore - a.adjustedScore);
+    console.log(
+      searchResult.map((obj) => ({
+        name: obj.name,
+        brands: obj.brands,
+        adjustedScore: obj.adjustedScore,
+      })),
+    );
+    res.status(200).json(searchResult);
   } catch (error) {
     res.status(500).send();
   }

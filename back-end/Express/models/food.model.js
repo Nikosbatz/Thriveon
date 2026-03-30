@@ -7,9 +7,21 @@ const foodSchema = new mongoose.Schema(
     protein: { type: Number, required: true },
     carbs: { type: Number, required: true },
     fats: { type: Number, required: true },
+    fiber: Number,
+    sodium: Number,
+    grams: Number,
+    portions: [
+      {
+        modifier: String,
+        amount: Number,
+        gramWeight: Number,
+        label: String,
+      },
+    ],
   },
+
   {
-    strict: false,
+    strict: true,
   },
 );
 

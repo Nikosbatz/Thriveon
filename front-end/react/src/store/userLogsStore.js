@@ -121,7 +121,6 @@ export const useUserLogsStore = create((set, get) => ({
       To rollback to the correct state. (Correct state == state of the DB)
     */
 
-    console.log("foodToUpload", foodToUpload);
     try {
       const res = await postFood(foodToUpload, "/foods/userlogs");
       console.log(res.message);

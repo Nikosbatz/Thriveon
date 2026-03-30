@@ -1,8 +1,10 @@
 const connectDB = require("./config/db.js");
 const express = require("express");
 const dotenv = require("dotenv");
-const expressMongoSanitize = require("@exortek/express-mongo-sanitize");
+const htmlSanitizer = require("./sanitizers/htmlSanitizer.js");
+const mongoSanitizer = require("./sanitizers/mongoSanitizer.js");
 const path = require("path");
+const helmet = require("helmet");
 
 dotenv.config();
 
@@ -14,21 +16,14 @@ const userRouter = require("./routes/userRouter.js");
 const healthRouter = require("./routes/healthRouter.js");
 const activitiesRouter = require("./routes/activitiesRouter.js");
 
-app.use(express.json());
+app.use(helmet());
+app.use(express.json({ limit: "10kb" })); // Reject big payloads that exceed 10kb
 app.use(express.urlencoded());
-app.use(expressMongoSanitize());
+app.use(htmlSanitizer);
+app.use(mongoSanitizer);
 
 //Connect to MongoDB
 connectDB();
-
-/*
-e.g. {
-  date: '2025-09-26',
-  water: null,
-  activites: [],
-  _id: new ObjectId('68d6c8f515f0f6bdce61cf15'),
-  foods: []
-}*/
 
 // Routers
 app.use("/api/foods", foodRouter);
@@ -49,4 +44,4 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(port, () => console.log(`Serve listening on port ${port}!`));
+app.listen(port, () => console.log(`Server listening on port ${port}!`));

@@ -12,9 +12,22 @@ const loggedFoodSchema = new mongoose.Schema(
     carbs: { type: Number, required: true },
     fats: { type: Number, required: true },
     mealType: { type: String, required: true },
+    selectedServingIndex: { type: Number, required: true },
+    code: String,
     brands: String,
+    fiber: Number,
+    sodium: Number,
+    grams: Number,
+    portions: [
+      {
+        modifier: String,
+        amount: Number,
+        gramWeight: Number,
+        label: String,
+      },
+    ],
   },
-  { strict: false },
+  { strict: true },
 );
 
 // MAIN Schema
@@ -24,7 +37,10 @@ const foodLogSchema = mongoose.Schema({
     unique: true,
     required: true,
   },
-  foodHistory: { type: [{}], default: [] },
+  foodHistory: {
+    type: [loggedFoodSchema],
+    default: [],
+  },
   logs: [
     {
       date: { type: String, required: true },
