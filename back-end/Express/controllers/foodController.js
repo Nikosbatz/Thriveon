@@ -224,8 +224,11 @@ async function getBarcodeFood(req, res) {
     const query = await BarcodeFood.find({
       code: code,
     });
-    console.log(query);
-    res.status(200).json(query[0]);
+    if (query.length !== 0) {
+      return res.status(200).json(query[0]);
+    } else {
+      throw new Error();
+    }
   } catch (err) {
     res.status(404).json({ message: "Could not find requested food" });
   }

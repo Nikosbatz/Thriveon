@@ -4,6 +4,7 @@ const FoodLog = require("../models/foodLog.model.js");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 const {
   sendVerificationEmail,
   sendPasswordResetEmail,
@@ -14,6 +15,8 @@ const {
   //sendPasswordResetEmail,
   //sendPasswordResetSuccessEmail,
 } = require("../mailtrap/mail.js");
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 async function createUser(req, res) {
   const userData = req.body;
@@ -157,6 +160,68 @@ async function loginUser(req, res) {
       user: safeUser,
     });
   } catch (error) {}
+}
+
+async function googleAuthUser(req, res) {
+  const googleData = req.body.googleData;
+
+  try {
+    // Verify Google data from front-end
+    const ticket = await client.verifyIdToken({
+      idToken: googleData.idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    // use authorized data for further operations
+    const authPayload = ticket.getPayload();
+
+    // Check if user exists
+    let user = await User.findOne({ email: authPayload.email });
+    let messageToSend = "signing in with google";
+    if (user) {
+      // if user exists as a local account link local and google accounts as one
+      if (
+        user.password &&
+        (user.googleId === null || user.googleId === undefined)
+      ) {
+        user.googleId = authPayload.sub;
+        await user.save();
+        messageToSend = "Linked already existing account with googleId";
+      }
+      res.status(200);
+    } else if (!user) {
+      // Create User with requested data
+      user = await User.create({
+        username: authPayload.email,
+        email: authPayload.email,
+        googleId: authPayload.sub,
+        isVerified: true,
+      });
+
+      // Create mongoDB document in foodlogs collection for the created User
+      const log = await FoodLog.create({
+        userId: user._id,
+        nutritionlogs: [],
+      });
+
+      messageToSend = "Created new user with googleId";
+      res.status(201);
+    }
+
+    // Generate JWT token
+    const token = generateAccessToken(user._id);
+
+    // Remove sensitive info from the user object
+    const { __v, password, mfa, googleId, ...safeUser } = user._doc;
+
+    res.json({
+      user: safeUser,
+      message: messageToSend,
+      accessToken: token,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(401).send();
+  }
 }
 
 async function forgotPassword(req, res) {
@@ -332,4 +397,5 @@ module.exports = {
   authToken,
   getInfo,
   sendVerificationCode,
+  googleAuthUser,
 };

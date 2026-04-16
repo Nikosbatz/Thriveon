@@ -159,11 +159,18 @@ async function postUserWeightLog(req, res) {
             },
           },
         },
+        { new: true },
       );
     }
     // if a new object is created in logs array and the weight field is $set successfully
     if (logs) {
-      return res.status(201).json(logs.logs);
+      const weightLogs = logs.logs
+        .map((log) => {
+          return { date: log.date, weight: log.weight ? log.weight : null };
+        })
+        .slice(-7);
+
+      return res.status(200).json(weightLogs);
     }
     // if query failed then userId doenst exist
     else {
