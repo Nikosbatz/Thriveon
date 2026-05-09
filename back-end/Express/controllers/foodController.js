@@ -1,6 +1,9 @@
 const Food = require("../models/food.model.js");
 const BarcodeFood = require("../models/barcodeFood.model.js");
 const FoodLog = require("../models/foodLog.model.js");
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+dayjs.extend(utc);
 
 async function getFoods(req, res) {
   try {
@@ -8,15 +11,11 @@ async function getFoods(req, res) {
 
     res.status(200).json(foods);
   } catch (err) {
-    console.log(err.message);
     res
       .status(500)
       .json({ err: "Internal Server Error. Could not Fetch Data" });
   }
 }
-//-------- --------//
-
-//-------- --------//
 
 async function createFood(req, res) {
   const body = req.body;
@@ -32,11 +31,9 @@ async function createFood(req, res) {
     });
     res.status(201).json(food);
   } catch (err) {
-    console.log(err.message);
     res.status(409).json({ error: "Server error, could not create food item" });
   }
 }
-//-------- --------//
 
 async function updateFood(req, res) {
   const foodId = req.params.id;
@@ -51,16 +48,16 @@ async function updateFood(req, res) {
   }
 }
 
-// returns all the foods of the current date that user has logged and the food history
+// returns all the foods of the date from params.id that user has logged and the food history
 async function getUserFoods(req, res) {
+  let date = req.params.id;
   const userId = req.userId;
-  const currentDate = new Date().toISOString().split("T")[0];
 
   try {
     let logs = await FoodLog.findOne(
       {
         userId: userId,
-        "logs.date": currentDate,
+        "logs.date": date,
       },
       { "logs.$": 1, foodHistory: 1 },
     );
@@ -74,13 +71,11 @@ async function getUserFoods(req, res) {
       res.status(200).json({ foodHistory: logs[0].foodHistory, data: [] });
     }
   } catch (err) {
-    console.log(err);
     res
       .status(404)
       .json({ message: "ERROR 404! Couldn't find logs for today..." });
   }
 }
-//-------- --------//
 
 // Logs a food to the foodLogs collection
 /* example object to send:
@@ -100,9 +95,9 @@ async function getUserFoods(req, res) {
 //  foodHistory object to map the correct object on the foodHistory on delete)
 
 async function logUserFood(req, res) {
+  const date = req.params.date;
   const data = req.body;
   const userId = req.userId;
-  const currentDate = new Date().toISOString().split("T")[0];
 
   let logs = null;
   try {
@@ -132,7 +127,7 @@ async function logUserFood(req, res) {
     }
 
     logs = await FoodLog.findOneAndUpdate(
-      { userId: userId, "logs.date": currentDate },
+      { userId: userId, "logs.date": date },
       {
         $push: {
           "logs.$.foods": {
@@ -141,23 +136,30 @@ async function logUserFood(req, res) {
           ...foodHistoryInsertQuery,
         },
       },
-      { new: true },
+      {
+        new: true,
+        // return only the logs of the requested date
+        projection: {
+          logs: { $elemMatch: { date: date } },
+          foodHistory: 1,
+        },
+      },
     );
 
     if (logs) {
       res.status(200).json({
-        message: logs.logs.at(-1).foods,
+        message: logs.logs.at(0).foods,
         foodHistory: logs.foodHistory,
       });
     }
-    // If a log with current date DOESNT EXIST create a new one (append in the logs array)
+    // If a log with this date DOESNT EXIST create a new one (append in the logs array)
     else {
       logs = await FoodLog.findOneAndUpdate(
         { userId: userId },
         {
           $push: {
             logs: {
-              date: currentDate,
+              date: date,
               foods: [
                 {
                   ...data,
@@ -171,12 +173,19 @@ async function logUserFood(req, res) {
             },
           },
         },
-        { new: true },
+        {
+          new: true,
+          // return only the logs of the requested date
+          projection: {
+            logs: { $elemMatch: { date: date } },
+            foodHistory: 1,
+          },
+        },
       );
 
       if (logs) {
         res.status(201).json({
-          message: logs.logs.at(-1).foods,
+          message: logs.logs.at(0).foods,
           foodHistory: logs.foodHistory,
         });
       } else {
@@ -184,23 +193,20 @@ async function logUserFood(req, res) {
       }
     }
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "Error 500\nFailed to Log food..." });
   }
 }
-//-------- --------//
 
 async function deleteUserLogsFood(req, res) {
-  const foodId = req.params.id;
+  const foodId = req.params.foodId;
+  const date = req.params.date;
   const userId = req.userId;
-  console.log(foodId);
-  const currentDate = new Date().toISOString().split("T")[0];
 
   try {
-    // Find the document with the userId and log with currentDate
+    // Find the document with the userId and log with the date requested
     // and pull the object with _id == foodId from the foods array
     const query = await FoodLog.updateOne(
-      { userId: userId, "logs.date": currentDate },
+      { userId: userId, "logs.date": date },
       { $pull: { "logs.$.foods": { _id: foodId } } },
     );
 
@@ -212,14 +218,12 @@ async function deleteUserLogsFood(req, res) {
       throw new Error(`ERROR!\nDelete operation on food._id:${foodId} FAILED!`);
     }
   } catch (err) {
-    console.log("Delete Failed");
     res.status(500).json({ message: err });
   }
 }
 
 async function getBarcodeFood(req, res) {
   const code = req.params.id;
-  console.log(code);
   try {
     const query = await BarcodeFood.find({
       code: code,
@@ -236,8 +240,6 @@ async function getBarcodeFood(req, res) {
 
 async function getSearchFoods(req, res) {
   const searchInput = req.params.id;
-
-  console.log(searchInput);
 
   if (typeof searchInput !== "string") {
     return res.status(400).json({ error: "Invalid input" });
@@ -271,13 +273,13 @@ async function getSearchFoods(req, res) {
     }));
     const searchResult = [...usdaWithWeight, ...barcodeWithWeight];
     searchResult.sort((a, b) => b.adjustedScore - a.adjustedScore);
-    console.log(
-      searchResult.map((obj) => ({
-        name: obj.name,
-        brands: obj.brands,
-        adjustedScore: obj.adjustedScore,
-      })),
-    );
+    // console.log(
+    //   searchResult.map((obj) => ({
+    //     name: obj.name,
+    //     brands: obj.brands,
+    //     adjustedScore: obj.adjustedScore,
+    //   })),
+    // );
     res.status(200).json(searchResult);
   } catch (error) {
     res.status(500).send();

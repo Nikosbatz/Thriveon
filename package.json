@@ -16,6 +16,7 @@
     "@exortek/express-mongo-sanitize": "^1.1.0",
     "@getbrevo/brevo": "^3.0.1",
     "bcryptjs": "^3.0.2",
+    "dayjs": "^1.11.20",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "google-auth-library": "^10.6.2",

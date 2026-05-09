@@ -11,9 +11,9 @@ const healthRouter = express.Router();
 
 healthRouter.use(authenticateToken);
 
-healthRouter.get("/water-logs", getUserWaterLog);
-healthRouter.post("/water-logs", postUserWaterLog);
-healthRouter.get("/weight-logs", getUserWeightLogs);
-healthRouter.post("/weight-logs", postUserWeightLog);
+healthRouter.get("/water-logs/:date", getUserWaterLog);
+healthRouter.post("/water-logs/:date", postUserWaterLog);
+healthRouter.get("/weight-logs/:date", getUserWeightLogs);
+healthRouter.post("/weight-logs/:date", postUserWeightLog);
 
 module.exports = healthRouter;

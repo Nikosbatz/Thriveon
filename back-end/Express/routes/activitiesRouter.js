@@ -10,7 +10,7 @@ const activitiesRouter = express.Router();
 // utilize authMiddleware before each controller
 activitiesRouter.use(authenticateToken);
 
-activitiesRouter.get("/user-logs", getTodayUserActivities);
-activitiesRouter.post("/user-logs", postTodayUserActivity);
+activitiesRouter.get("/user-logs/:date", getTodayUserActivities);
+activitiesRouter.post("/user-logs/:date", postTodayUserActivity);
 
 module.exports = activitiesRouter;

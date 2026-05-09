@@ -588,6 +588,10 @@ body.no-scroll {
   border-top: 1px solid rgb(67, 67, 67);
   padding: 0em 1em;
 }
+.landing-page-footer a {
+  color: rgb(206, 206, 206);
+  font-size: 0.9em;
+}
 .landing-page-footer p {
   font-size: 0.9em;
   color: rgb(175, 175, 175);
@@ -4236,6 +4240,50 @@ body.no-scroll {
   height: 100px;
 }
 /* ------ LOADING-COMPONENT BREAKPOINTS ------ */
+/* ------ END ------ */
+
+/* ------ PRIVACY-POLICY  ------ */
+.privacy-root {
+  display: flex;
+  flex-direction: column;
+}
+.privacy-header {
+  box-shadow: 0 2px 4px rgba(180, 35, 35, 0.1);
+  background: var(--lv-header);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding-right: 40px;
+}
+.privacy-header img {
+  width: 70px;
+}
+.privacy-header h2 {
+  color: white;
+}
+.policy-content-container {
+  box-shadow: black 5px 5px 5px;
+  align-self: center;
+  width: 60%;
+  max-width: 1000px;
+  border-radius: 10px;
+  background-color: white;
+  overflow: hidden;
+}
+.policy-content {
+  padding: 10px;
+  border-color: #000;
+  border: 2px;
+  overflow: hidden;
+  text-align: left;
+}
+.policy-content h1,
+h2,
+h3 {
+  text-align: center;
+}
+/* ------ PRIVACY-POLICY BREAKPOINTS ------ */
 /* ------ END ------ */
 
 /* ------ DASHBOARD-CARD-SKELETON ------ */

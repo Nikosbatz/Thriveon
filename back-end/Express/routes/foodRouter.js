@@ -24,10 +24,10 @@ foodRouter.get("/search/:id", getSearchFoods);
 
 foodRouter.get("/barcode/:id", getBarcodeFood);
 
-foodRouter.post("/userlogs", logUserFood);
+foodRouter.post("/userlogs/:date", logUserFood);
 
-foodRouter.get("/userlogs", getUserFoods);
+foodRouter.get("/userlogs/:id", getUserFoods);
 
-foodRouter.delete("/userlogs/:id", deleteUserLogsFood);
+foodRouter.delete("/userlogs/:date/:foodId", deleteUserLogsFood);
 
 module.exports = foodRouter;

@@ -48,8 +48,8 @@ const foodLogSchema = mongoose.Schema({
         type: [loggedFoodSchema],
         default: [],
       },
-      water: { type: Number, default: null },
-      weight: { type: Number, default: null },
+      water: { type: Number, default: 0 },
+      weight: { type: Number, default: 0 },
       activities: {
         type: [
           {

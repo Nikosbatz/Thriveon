@@ -105,9 +105,12 @@ export default function LandingPage() {
       <footer className="landing-page-footer">
         <div className="logo-container">
           <Activity />
-          <h2>NutriTracker</h2>
+          <h2>ThriveOn</h2>
         </div>
-        <p>© 2025 NutriTrack. Track your wellness journey.</p>
+        <div>
+          <p>© 2025 ThriveOn. Track your wellness journey.</p>
+          <a href="./privacy-policy">Privacy policy</a>
+        </div>
       </footer>
     </div>
   );

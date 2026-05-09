@@ -24,9 +24,11 @@ import OnBoardingLayout from "./components/OnBoarding/OnBoardingLayout";
 import LandingPage from "./components/LandingPage/LandingPage";
 import { RedirectRoute } from "./router/RedirectRoute";
 import ProtectedRoute from "./router/ProtectedRoute";
+import PrivacyPolicy from "./components/policy/PrivacyPolicy";
 
 const router = createBrowserRouter([
   { path: "/", element: <LandingPage /> },
+  { path: "/privacy-policy", element: <PrivacyPolicy /> },
   {
     path: "/auth",
     element: (
