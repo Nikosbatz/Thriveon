@@ -28,6 +28,8 @@ const userSchema = new mongoose.Schema({
   verificationTokenExpiresAt: Date,
   resetPasswordToken: String,
   resetPasswordTokenExpiresAt: Date,
+  deleteAccountToken: String,
+  deleteAccountTokenExpiresAt: Date,
   onBoardingCompleted: { type: Boolean, default: false },
 });
 

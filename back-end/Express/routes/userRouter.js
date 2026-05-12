@@ -9,6 +9,8 @@ const {
   getInfo,
   sendVerificationCode,
   googleAuthUser,
+  deleteAccountRequest,
+  deleteAccount,
 } = require("../controllers/userController.js");
 const express = require("express");
 const authenticateToken = require("../middleware/authMiddleware.js");
@@ -22,6 +24,8 @@ userRouter.post("/verify-email", verifyUser);
 userRouter.post("/resend-verification-code", sendVerificationCode);
 userRouter.post("/forgot-password", forgotPassword);
 userRouter.post("/reset-password/:token", resetPassword);
+userRouter.post("/delete-account", deleteAccountRequest);
+userRouter.delete("/delete-account/:token", deleteAccount);
 
 userRouter.use(authenticateToken);
 

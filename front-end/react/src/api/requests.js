@@ -4,8 +4,6 @@ const BASE_URI = "/api";
 export async function login(email, password) {
   const loginData = { email: email, password: password };
 
-  console.log(loginData);
-
   const options = {
     method: "POST",
     headers: {
@@ -18,8 +16,6 @@ export async function login(email, password) {
   const res = await fetch(`${BASE_URI}/user/login`, options);
   const data = await res.json();
 
-  console.log(res.status);
-  console.log(data);
   if (res.status === 200) {
     data.accessToken
       ? localStorage.setItem("token", data.accessToken)
@@ -35,8 +31,6 @@ export async function login(email, password) {
 
 export async function register(email, password) {
   const registerData = { email: email, password: password };
-
-  console.log("register data:" + registerData);
 
   const options = {
     method: "POST",
@@ -82,8 +76,6 @@ export async function getEmailVerificationToken(email) {
 }
 
 export async function postEmailVerificationToken(verificationToken) {
-  console.log("Verify Email");
-
   const options = {
     method: "POST",
     headers: {
@@ -111,8 +103,6 @@ export async function postEmailVerificationToken(verificationToken) {
 }
 
 export async function postForgotPasswordEmail(email) {
-  console.log("Verify Email");
-
   const options = {
     method: "POST",
     headers: {
@@ -132,8 +122,6 @@ export async function postForgotPasswordEmail(email) {
 }
 
 export async function postResetPassword(password, token) {
-  console.log("Reset Password");
-
   const options = {
     method: "POST",
     headers: {
@@ -148,7 +136,6 @@ export async function postResetPassword(password, token) {
   if (res.status === 200) {
     return;
   } else if (res.status === 400) {
-    console.log("asdadas");
     throw new Error("Invalid password reset token.");
   }
 }
@@ -240,7 +227,6 @@ export async function postFood(data, path) {
 
 export async function deleteUserLogsFood(food) {
   // Relative URI cause of the PROXY (To avoid CORS)
-  console.log(food);
   const uri = `${BASE_URI}/foods/userlogs/${food._id}`;
   const options = {
     method: "DELETE",
@@ -281,8 +267,6 @@ export async function getUserWaterIntake() {
 
 export async function postUserWaterIntake(water) {
   const uri = `${BASE_URI}/health/water-logs`;
-
-  console.log("water " + water);
 
   const options = {
     method: "POST",
@@ -380,9 +364,53 @@ export async function postUserWeightLogs(weight) {
   const res = await fetchWrapper(uri, options);
 
   if (res.status === 200 || res.status === 201) {
-    console.log("200 weight");
     return await res.json();
   } else {
     throw Error();
+  }
+}
+
+export async function postDeleteAccount(email) {
+  const options = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json;charset=UTF-8",
+    },
+    body: JSON.stringify({ email: email }),
+  };
+
+  const res = await fetch(`${BASE_URI}/user/delete-account`, options);
+
+  if (res.status === 200) {
+    return;
+  } else if (res.status === 400) {
+    // throw new Error("User wasn't found");
+    return;
+  }
+}
+
+export async function sendDeleteAccountToken(token) {
+  const options = {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+    },
+  };
+
+  try {
+    const res = await fetch(
+      `${BASE_URI}/user/delete-account/${token}`,
+      options,
+    );
+    if (res.status === 200) {
+      return;
+    } else if (res.status === 400) {
+      throw new Error("Deletion token is invalid");
+    } else {
+      throw new Error(`Error ${res.status}`);
+    }
+  } catch (error) {
+    throw new Error(`Something went wrong... Please try again!`);
   }
 }

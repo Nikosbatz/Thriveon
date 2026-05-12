@@ -5,7 +5,6 @@ export default function PrivacyPolicy() {
     <div className="privacy-root">
       <header className="privacy-header">
         <img src="../assets/logo_transparent.png" alt="" />
-
         <h2>ThriveOn</h2>
       </header>
       <main className="policy-content-container">

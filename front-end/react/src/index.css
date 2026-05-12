@@ -3485,11 +3485,9 @@ body.no-scroll {
   background: transparent;
   transition: all 0.25s ease;
 }
-
 .login-form .input-pair input:focus {
   box-shadow: 0px 0px 5px rgb(0, 2, 24);
 }
-
 .login-form .input-pair .eye-icon {
   width: 1.2em;
   height: 1.2em;
@@ -4284,6 +4282,83 @@ h3 {
   text-align: center;
 }
 /* ------ PRIVACY-POLICY BREAKPOINTS ------ */
+/* ------ END ------ */
+
+/* ------ DELETE-ACCOUNT ------ */
+.delete-account-main {
+  color: white;
+}
+
+.delete-account-main h3 {
+  color: rgb(205, 205, 205);
+}
+
+.delete-account-main form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.delete-account-main #email-input-container {
+  background-color: var(--lv-primary-20);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.delete-account-main #email-input {
+  outline: none;
+  font-family: "quicksand";
+  font-weight: 700;
+  font-size: 1em;
+  min-width: 300px;
+  border-radius: 7px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: rgb(0, 138, 193);
+  background-color: transparent;
+  padding: 5px;
+  color: white;
+}
+
+.delete-account-main #email-input:focus {
+  border-color: #7f93a2;
+}
+.delete-account-main #terms-label {
+  font-size: 0.8em;
+  align-items: center;
+  display: flex;
+  text-align: left;
+}
+.delete-account-main form button {
+  background-color: var(--lv-primary-20);
+  outline: none;
+  border: none;
+  padding: 8px;
+  font-size: 1.02em;
+  border-radius: 5px;
+}
+.delete-account-main form button:enabled {
+  color: white;
+  transition: all 0.1s ease-in-out;
+  cursor: pointer;
+}
+.delete-account-main form button:enabled:hover {
+  background-color: #0390af;
+}
+
+.delete-account-main #delete-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1.05em;
+  border-radius: 10px;
+  font-family: quicksand;
+  font-weight: 800;
+  cursor: pointer;
+}
+.delete-account-main #delete-button:hover {
+  background-color: rgb(142, 5, 5);
+}
+/* ------ DELETE-ACCOUNT BREAKPOINTS ------ */
 /* ------ END ------ */
 
 /* ------ DASHBOARD-CARD-SKELETON ------ */

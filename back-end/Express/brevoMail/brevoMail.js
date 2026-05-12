@@ -6,6 +6,7 @@ import {
   PASSWORD_RESET_REQUEST_TEMPLATE,
   PASSWORD_RESET_SUCCESS_TEMPLATE,
   PASSWORD_RESET_REQUEST_TEMPLATE_MOBILE,
+  ACCOUNT_DELETION_TEMPLATE,
 } from "./emailTemplates.js";
 
 export async function sendVerificationEmail(userEmail, verificationToken) {
@@ -103,5 +104,38 @@ export async function sendPasswordResetSuccessEmail(userEmail) {
   } catch (error) {
     console.log("PASSWORD RESET SUCCESS EMAIL NOT SEND");
     throw new Error("Error sending pass successful reset email to user");
+  }
+}
+
+export async function sendDeleteAccountEmail(userEmail, deleteAccountToken) {
+  console.log("SEND DELETE ACCOUNT EMAIL");
+  let emailAPI = new TransactionalEmailsApi();
+  emailAPI.authentications.apiKey.apiKey = process.env.BREVO_API_TOKEN;
+
+  let URI = null;
+  if (process.env.NODE_ENV === "production") {
+    URI = process.env.CLIENT_URI + `/delete-account/${deleteAccountToken}`;
+  } else {
+    console.log(process.env.DEV_CLIENT_URI);
+    URI = process.env.DEV_CLIENT_URI + `/delete-account/${deleteAccountToken}`;
+  }
+
+  let message = new SendSmtpEmail();
+  message.subject = "Account deletion request";
+  message.sender = {
+    email: "nikosbatznanas@gmail.com",
+    name: "ThriveOn",
+  };
+
+  message.to = [{ email: userEmail }];
+  message.htmlContent = ACCOUNT_DELETION_TEMPLATE.replace("{deleteURL}", URI);
+
+  try {
+    const res = await emailAPI.sendTransacEmail(message);
+    console.log("account deletion email sent successfully");
+    return { success: true };
+  } catch (error) {
+    console.log("ACCOUNT DELETION EMAIL WAS NOT SEND");
+    throw new Error("Error sending account deletion email to user");
   }
 }

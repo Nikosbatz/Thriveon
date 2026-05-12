@@ -8,10 +8,8 @@ export default function AnimatedCard({ feature }) {
     let angle = 0;
     function animate() {
       angle = (angle + feature.speed) % 360;
-      cardRef.current.querySelector(
-        "span"
-      ).style.backgroundImage = `conic-gradient(from ${angle}deg, ${feature.mainColor}, ${feature.backgroundColor}, rgba(0, 255, 255, 0.18), ${feature.mainColor})`;
-      console.log(angle);
+      cardRef.current.querySelector("span").style.backgroundImage =
+        `conic-gradient(from ${angle}deg, ${feature.mainColor}, ${feature.backgroundColor}, rgba(0, 255, 255, 0.18), ${feature.mainColor})`;
       requestAnimationFrame(animate);
     }
     requestAnimationFrame(animate);

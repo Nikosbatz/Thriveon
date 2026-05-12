@@ -25,10 +25,14 @@ import LandingPage from "./components/LandingPage/LandingPage";
 import { RedirectRoute } from "./router/RedirectRoute";
 import ProtectedRoute from "./router/ProtectedRoute";
 import PrivacyPolicy from "./components/policy/PrivacyPolicy";
+import DeleteAccount from "./components/DeleteAccount/DeleteAccount";
+import DeleteAccountVerification from "./components/DeleteAccount/DeleteAccountVerification";
 
 const router = createBrowserRouter([
   { path: "/", element: <LandingPage /> },
   { path: "/privacy-policy", element: <PrivacyPolicy /> },
+  { path: "/delete-account", element: <DeleteAccount /> },
+  { path: "/delete-account/:token", element: <DeleteAccountVerification /> },
   {
     path: "/auth",
     element: (

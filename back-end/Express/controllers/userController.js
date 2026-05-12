@@ -9,6 +9,7 @@ const {
   sendVerificationEmail,
   sendPasswordResetEmail,
   sendPasswordResetSuccessEmail,
+  sendDeleteAccountEmail,
 } = require("../brevoMail/brevoMail");
 const {
   //sendVerificationEmail,
@@ -101,8 +102,6 @@ async function verifyUser(req, res) {
 async function sendVerificationCode(req, res) {
   const userEmail = req.body.email;
 
-  console.log("userEmail", userEmail);
-
   try {
     const user = await User.findOne({ email: userEmail });
 
@@ -129,8 +128,6 @@ async function loginUser(req, res) {
   const userData = req.body;
   const userEmail = userData.email;
   const userPass = userData.password;
-
-  console.log(userData);
 
   try {
     // Check if user exists
@@ -219,7 +216,6 @@ async function googleAuthUser(req, res) {
       accessToken: token,
     });
   } catch (error) {
-    console.log(error);
     return res.status(401).send();
   }
 }
@@ -259,7 +255,6 @@ async function forgotPassword(req, res) {
   else {
     //TODO: change email template for mobile platform
 
-    console.log("asdasda");
     try {
       const user = await User.findOne({ email: email });
 
@@ -377,9 +372,71 @@ async function updateInfo(req, res) {
   }
 }
 
+async function deleteAccountRequest(req, res) {
+  const email = req.body.email;
+
+  try {
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      throw new Error();
+    }
+
+    // Create Reset Token. Expires in 1 Hour
+    const deleteAccountToken = crypto.randomBytes(20).toString("hex");
+    const deleteAccountTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
+
+    user.deleteAccountToken = deleteAccountToken;
+    user.deleteAccountTokenExpiresAt = deleteAccountTokenExpiresAt;
+    await user.save();
+
+    // Send a url with the resetToken to the User's Email
+    await sendDeleteAccountEmail(email, deleteAccountToken);
+
+    res
+      .status(200)
+      .json({ message: "Password Reset Email was sent to the user!" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
+
+async function deleteAccount(req, res) {
+  const { token } = req.params;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const user = await User.findOne({
+      deleteAccountToken: token,
+      deleteAccountTokenExpiresAt: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid Password Reset Link!" });
+    }
+
+    // Try to DELETE user data
+    await FoodLog.deleteOne({
+      userId: user._id,
+    });
+    await User.deleteOne({ _id: user._id });
+
+    // If we got here, both were successful. Commit the changes
+    await session.commitTransaction();
+
+    return res.status(200).send();
+  } catch (error) {
+    // If anything fails, undo everything (rollback)
+    await session.abortTransaction();
+    return res.status(500).send();
+  } finally {
+    session.endSession();
+  }
+}
+
 // authMiddleware is used before this function
 async function authToken(req, res) {
-  console.log("authToken");
   res.status(200).send();
 }
 
@@ -398,4 +455,6 @@ module.exports = {
   getInfo,
   sendVerificationCode,
   googleAuthUser,
+  deleteAccountRequest,
+  deleteAccount,
 };
