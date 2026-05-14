@@ -49,12 +49,12 @@ async function postTodayUserActivity(req, res) {
 
     // if append was successful return
     if (data) {
-      res
-        .status(200)
-        .json({ success: true, data: data.logs.at(-1).activities });
+      // return res
+      //   .status(200)
+      //   .json({ success: true, data: data.logs.at(-1).activities });
     }
-    // else create new Log for the date and insert activity object
-    else {
+    // If there are no logs for the requested date
+    if (!data) {
       data = await FoodLog.findOneAndUpdate(
         { userId: userId },
         {
@@ -75,14 +75,15 @@ async function postTodayUserActivity(req, res) {
       );
 
       // if Log creation and activity insertion was successful return
-      if (data) {
-        res
-          .status(201)
-          .json({ success: true, data: data.logs.at(-1).activities });
-      } else {
+      if (!data) {
         throw new Error("Couldnt create log");
       }
     }
+
+    const dateIndex = data.logs.findIndex((obj) => obj.date === date);
+    return res
+      .status(200)
+      .json({ success: true, data: data.logs[dateIndex].activities });
   } catch (error) {
     //console.log(error);
     res.status(500).json({ success: false });

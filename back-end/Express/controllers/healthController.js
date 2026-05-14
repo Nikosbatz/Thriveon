@@ -91,6 +91,7 @@ async function getUserWeightLogs(req, res) {
         return { date: log.date, weight: log.weight ? log.weight : null };
       });
 
+      // TODO: not optimal to sort the logs each time there is a request (the logs should be sorted in the db already)
       weightLogs.sort((a, b) => a.date.localeCompare(b.date));
       requestedDateLogIndex = weightLogs.findIndex((obj) => obj.date === date);
 

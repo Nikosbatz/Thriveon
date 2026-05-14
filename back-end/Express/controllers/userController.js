@@ -58,6 +58,8 @@ async function createUser(req, res) {
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
     });
 
+    console.log(user);
+
     // Create mongoDB document in foodlogs collection for the created User
     const log = await FoodLog.create({
       userId: user._id,
@@ -66,6 +68,7 @@ async function createUser(req, res) {
 
     res.status(201).json({ message: "Successful register" });
   } catch (err) {
+    console.log(err);
     res.status(409).json({ message: "Error 409\nUser could not be created!" });
   }
 }
@@ -125,6 +128,7 @@ async function sendVerificationCode(req, res) {
 }
 
 async function loginUser(req, res) {
+  console.log("login");
   const userData = req.body;
   const userEmail = userData.email;
   const userPass = userData.password;

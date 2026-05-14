@@ -61,6 +61,7 @@ export default function Login() {
       await register(registerForm.email.toLowerCase(), registerForm.password);
       navigate("../verify-email");
     } catch (error) {
+      console.log(error);
       toast.error("Something went wrong. Please try again or contact support!");
       //alert(error.message);
       setLoginPending(false);

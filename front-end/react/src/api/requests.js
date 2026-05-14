@@ -43,9 +43,12 @@ export async function register(email, password) {
 
   const res = await fetch(`${BASE_URI}/user/register`, options);
 
+  console.log(res.status);
+
   // If status === user created successfully
   if (res.status === 201) {
     const data = await res.json();
+
     return;
   } else if (res.status === 400) {
     throw new Error("A user with this E-mail already exists...");
