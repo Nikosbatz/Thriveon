@@ -251,7 +251,7 @@ async function getSearchFoods(req, res) {
       { score: { $meta: "textScore" } },
     )
       .sort({ score: { $meta: "textScore" } })
-      .limit(30)
+      .limit(150)
       .lean();
     const barcodeSearchResult = await BarcodeFood.find(
       { $text: { $search: searchInput } },
@@ -264,12 +264,14 @@ async function getSearchFoods(req, res) {
     // Adds Weights to the results to give priority to USDA foods over Barcode products
     const usdaWithWeight = usdaSearchResult.map((item) => ({
       ...item,
-      adjustedScore: (item.score || 0) + 1.5,
+      adjustedScore: item.starred
+        ? (item.score || 0) + 2
+        : (item.score || 0) + 1.5,
     }));
 
     const barcodeWithWeight = barcodeSearchResult.map((item) => ({
       ...item,
-      adjustedScore: item.score || +0,
+      adjustedScore: item.score || 0,
     }));
     const searchResult = [...usdaWithWeight, ...barcodeWithWeight];
     searchResult.sort((a, b) => b.adjustedScore - a.adjustedScore);

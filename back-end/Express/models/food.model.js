@@ -18,6 +18,8 @@ const foodSchema = new mongoose.Schema(
         label: String,
       },
     ],
+    logs: Number,
+    starred: Boolean,
   },
 
   {

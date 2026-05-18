@@ -16,6 +16,8 @@ const barcodeFoodSchema = new mongoose.Schema(
         label: String,
       },
     ],
+    logs: Number,
+    starred: Boolean,
   },
   {
     strict: false,
