@@ -8,6 +8,8 @@ const {
   getUserFoods,
   getBarcodeFood,
   getSearchFoods,
+  createRecipe,
+  deleteRecipe,
 } = require("../controllers/foodController.js");
 const authenticateToken = require("../middleware/authMiddleware.js");
 const express = require("express");
@@ -24,9 +26,13 @@ foodRouter.get("/search/:id", getSearchFoods);
 
 foodRouter.get("/barcode/:id", getBarcodeFood);
 
+foodRouter.get("/userlogs/:id", getUserFoods);
+
+foodRouter.post("/userlogs/recipes", createRecipe);
+
 foodRouter.post("/userlogs/:date", logUserFood);
 
-foodRouter.get("/userlogs/:id", getUserFoods);
+foodRouter.delete("/userlogs/recipes/:recipeId", deleteRecipe);
 
 foodRouter.delete("/userlogs/:date/:foodId", deleteUserLogsFood);
 

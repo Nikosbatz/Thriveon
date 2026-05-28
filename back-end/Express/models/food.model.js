@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { loggedFoodSchema } = require("./foodLog.model");
 
 const foodSchema = new mongoose.Schema(
   {

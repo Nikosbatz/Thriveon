@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { foodSchema } = require("./food.model");
 
 // Helper Schema
 const loggedFoodSchema = new mongoose.Schema(
@@ -30,6 +31,35 @@ const loggedFoodSchema = new mongoose.Schema(
   { strict: true },
 );
 
+const recipeSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    calories: { type: Number, required: true },
+    protein: { type: Number, required: true },
+    carbs: { type: Number, required: true },
+    fats: { type: Number, required: true },
+    loggedQuantity: { type: Number, required: true },
+    selectedServingIndex: { type: Number, required: true },
+    grams: { type: Number, required: true },
+    fiber: Number,
+    sodium: Number,
+    grams: Number,
+    portions: [
+      {
+        modifier: String,
+        amount: Number,
+        gramWeight: Number,
+        label: String,
+      },
+    ],
+    ingredients: [loggedFoodSchema],
+  },
+
+  {
+    strict: true,
+  },
+);
+
 // MAIN Schema
 const foodLogSchema = mongoose.Schema({
   userId: {
@@ -41,6 +71,7 @@ const foodLogSchema = mongoose.Schema({
     type: [loggedFoodSchema],
     default: [],
   },
+  myFoods: { type: [recipeSchema], default: [] },
   logs: [
     {
       date: { type: String, required: true },

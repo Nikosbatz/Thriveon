@@ -95,10 +95,18 @@ async function getUserWeightLogs(req, res) {
       weightLogs.sort((a, b) => a.date.localeCompare(b.date));
       requestedDateLogIndex = weightLogs.findIndex((obj) => obj.date === date);
 
-      const finalWeightLogs =
-        requestedDateLogIndex === -1
-          ? weightLogs.slice(-7)
-          : weightLogs.slice(0, requestedDateLogIndex + 1).slice(-7);
+      let finalWeightLogs;
+      if (requestedDateLogIndex === -1) {
+        finalWeightLogs = weightLogs
+          .filter((log) => log.date.localeCompare(date) === -1)
+          .slice(-7);
+      } else {
+        finalWeightLogs = weightLogs
+          .slice(0, requestedDateLogIndex + 1)
+          .slice(-7);
+      }
+
+      console.log(finalWeightLogs);
       res.status(200).json({ data: finalWeightLogs });
     }
   } catch (err) {

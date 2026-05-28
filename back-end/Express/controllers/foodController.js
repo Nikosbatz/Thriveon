@@ -59,16 +59,25 @@ async function getUserFoods(req, res) {
         userId: userId,
         "logs.date": date,
       },
-      { "logs.$": 1, foodHistory: 1 },
+      { "logs.$": 1, foodHistory: 1, myFoods: 1 },
     );
-
     if (logs) {
-      res
-        .status(200)
-        .json({ data: logs.logs[0].foods, foodHistory: logs.foodHistory });
+      res.status(200).json({
+        data: logs.logs[0].foods,
+        foodHistory: logs.foodHistory,
+        myFoods: logs.myFoods,
+      });
     } else {
-      logs = await FoodLog.find({ userId: userId }, { foodHistory: 1 });
-      res.status(200).json({ foodHistory: logs[0].foodHistory, data: [] });
+      logs = await FoodLog.find(
+        { userId: userId },
+        { foodHistory: 1, myFoods: 1 },
+      );
+
+      res.status(200).json({
+        foodHistory: logs[0].foodHistory,
+        myFoods: logs[0].myFoods,
+        data: [],
+      });
     }
   } catch (err) {
     res
@@ -99,6 +108,11 @@ async function logUserFood(req, res) {
   const data = req.body;
   const userId = req.userId;
 
+  if (data.loggedQuantity <= 0) {
+    return res.status(400).send();
+  }
+
+  console.log(data);
   let logs = null;
   try {
     // Query to get foodHistory
@@ -111,9 +125,12 @@ async function logUserFood(req, res) {
 
     // Dont allow duplicates in foodhistory
     // Duplicate is defined as same name and same quantity
-    foodExistsInHistory = queryResult.foodHistory.find(
-      (food) => food.name === data.name && food.quantity === data.quantity,
+    const foodExistsInHistory = queryResult.foodHistory.find(
+      (food) =>
+        food.name === data.name && food.loggedQuantity === data.loggedQuantity,
     );
+
+    console.log(foodExistsInHistory);
 
     // Define an object representing the query regarding foodHistory
     // if food exists in foodHistory, object remains empty and query does nothing
@@ -194,6 +211,56 @@ async function logUserFood(req, res) {
     }
   } catch (err) {
     res.status(500).json({ message: "Error 500\nFailed to Log food..." });
+  }
+}
+
+async function createRecipe(req, res) {
+  const userId = req.userId;
+  const recipe = req.body;
+
+  try {
+    const updatedLog = await FoodLog.findOneAndUpdate(
+      { userId: userId },
+      {
+        $push: { myFoods: recipe }, // Push item or create array if it doesn't exist.
+      },
+      {
+        new: true, // Return the modified document instead of the original
+        runValidators: true,
+      },
+    );
+
+    res.status(201).json({ myFoods: updatedLog.myFoods });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send();
+  }
+
+  return res.status(200).send();
+}
+
+async function deleteRecipe(req, res) {
+  const userId = req.userId;
+  const recipeId = req.params.recipeId;
+
+  try {
+    const logs = await FoodLog.findOneAndUpdate(
+      { userId: userId },
+      { $pull: { myFoods: { _id: recipeId } } },
+      { new: true },
+    );
+
+    console.log(logs.myFoods);
+    if (logs) {
+      res.status(200).json({ myFoods: logs.myFoods });
+    } else {
+      throw new Error(
+        `ERROR!\nDelete operation on food._id:${recipeId} FAILED!`,
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send();
   }
 }
 
@@ -298,4 +365,6 @@ module.exports = {
   getUserFoods,
   getBarcodeFood,
   getSearchFoods,
+  createRecipe,
+  deleteRecipe,
 };
