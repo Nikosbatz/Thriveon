@@ -95,8 +95,12 @@ async function verifyUser(req, res) {
     await user.save();
 
     const token = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
     // return OK status
-    return res.status(200).json({ accessToken: token });
+    return res
+      .status(200)
+      .json({ accessToken: token, refreshToken: refreshToken });
   } catch (error) {
     res.status(500).json({ message: "User couldnt be verified " });
   }
@@ -128,7 +132,6 @@ async function sendVerificationCode(req, res) {
 }
 
 async function loginUser(req, res) {
-  console.log("login");
   const userData = req.body;
   const userEmail = userData.email;
   const userPass = userData.password;
@@ -151,12 +154,14 @@ async function loginUser(req, res) {
         .json({ email: userEmail, isVerified: user.isVerified });
 
     const token = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
 
     // Remove sensitive info from the user object
     const { __v, password, mfa, ...safeUser } = user._doc;
 
     res.status(200).json({
       accessToken: token,
+      refreshToken: refreshToken,
       isVerified: user.isVerified,
       user: safeUser,
     });
@@ -185,9 +190,12 @@ async function googleAuthUser(req, res) {
         (user.googleId === null || user.googleId === undefined)
       ) {
         user.googleId = authPayload.sub;
-        await user.save();
         messageToSend = "Linked already existing account with googleId";
       }
+      // auto enable autoLogin
+      user.autoLoginEnabled = true;
+      await user.save();
+
       res.status(200);
     } else if (!user) {
       // Create User with requested data
@@ -210,6 +218,7 @@ async function googleAuthUser(req, res) {
 
     // Generate JWT token
     const token = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
 
     // Remove sensitive info from the user object
     const { __v, password, mfa, googleId, ...safeUser } = user._doc;
@@ -218,8 +227,10 @@ async function googleAuthUser(req, res) {
       user: safeUser,
       message: messageToSend,
       accessToken: token,
+      refreshToken: refreshToken,
     });
   } catch (error) {
+    console.log(error);
     return res.status(401).send();
   }
 }
@@ -336,6 +347,8 @@ async function updateInfo(req, res) {
   const userId = req.userId;
   const body = req.body;
 
+  console.log(req.body);
+
   body.onBoardingCompleted = true;
   const allowedFields = [
     "username",
@@ -348,6 +361,7 @@ async function updateInfo(req, res) {
     "nutritionGoals",
     "healthGoals",
     "onBoardingCompleted",
+    "autoLoginEnabled",
   ];
 
   try {
@@ -444,8 +458,40 @@ async function authToken(req, res) {
   res.status(200).send();
 }
 
+async function refreshToken(req, res) {
+  const refreshToken = req.body.refreshToken; // Or req.cookies.refreshToken if using cookies
+
+  if (!refreshToken) {
+    return res.status(400).json({ message: "Refresh token required" });
+  }
+
+  // 2. Verify the token
+  jwt.verify(
+    refreshToken,
+    process.env.JWT_REFRESH_SECRET,
+    (err, decodedUserId) => {
+      if (err) {
+        return res
+          .status(401)
+          .json({ message: "Refresh token expired or invalid" });
+      }
+
+      // 3. Issue a new access token
+      const newAccessToken = generateAccessToken(decodedUserId.id);
+
+      return res.status(201).json({ accessToken: newAccessToken });
+    },
+  );
+}
+
 function generateAccessToken(userId) {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "30d" });
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "30m" });
+}
+
+function generateRefreshToken(userId) {
+  return jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: "1y",
+  });
 }
 
 module.exports = {
@@ -461,4 +507,5 @@ module.exports = {
   googleAuthUser,
   deleteAccountRequest,
   deleteAccount,
+  refreshToken,
 };
