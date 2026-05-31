@@ -5,16 +5,24 @@ dotenv.config();
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
+  // Safely extract the token from "Bearer <TOKEN>"
   const token = authHeader && authHeader.split(" ")[1];
 
-  if (token == null) return res.sendStatus(401);
+  if (!token) {
+    return res.status(401).json({ message: "Access token missing" });
+  }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, userIdDecoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decodedUserId) => {
     if (err) {
       console.log(err);
-      return res.sendStatus(401);
+      // 401 signals to the frontend that the token is invalid/expired
+      return res
+        .status(401)
+        .json({ message: "Access token expired or invalid" });
     }
-    req.userId = userIdDecoded.id;
+
+    // Assuming your token payload looks like: { id: "user_id_here" }
+    req.userId = decodedUserId.id;
     next();
   });
 }

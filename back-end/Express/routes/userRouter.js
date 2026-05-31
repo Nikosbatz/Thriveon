@@ -11,12 +11,14 @@ const {
   googleAuthUser,
   deleteAccountRequest,
   deleteAccount,
+  refreshToken,
 } = require("../controllers/userController.js");
 const express = require("express");
 const authenticateToken = require("../middleware/authMiddleware.js");
 
 const userRouter = express.Router();
 
+userRouter.post("/refresh-token", refreshToken);
 userRouter.post("/register", createUser);
 userRouter.post("/login", loginUser);
 userRouter.post("/googleAuth", googleAuthUser);
