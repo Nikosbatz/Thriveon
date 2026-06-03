@@ -313,42 +313,65 @@ async function getSearchFoods(req, res) {
   }
 
   try {
-    const usdaSearchResult = await Food.find(
-      { $text: { $search: searchInput } },
-      { score: { $meta: "textScore" } },
-    )
-      .sort({ score: { $meta: "textScore" } })
-      .limit(150)
-      .lean();
-    const barcodeSearchResult = await BarcodeFood.find(
-      { $text: { $search: searchInput } },
-      { score: { $meta: "textScore" } },
-    )
-      .sort({ score: { $meta: "textScore" } })
-      .limit(30)
-      .lean();
+    const [usdaSearchResult, barcodeSearchResult] = await Promise.all([
+      // 1. USDA FOODS SEARCH
+      Food.aggregate([
+        {
+          $search: {
+            index: "default", // Matches the index name in Atlas
+            text: {
+              query: searchInput,
+              path: ["name", "brands"], // Fields to search
+              fuzzy: { maxEdits: 1 }, // Typo tolerance! (e.g., "bananna" -> "banana")
+            },
+          },
+        },
+        { $limit: 150 },
+        {
+          $set: {
+            score: { $meta: "searchScore" },
+            adjustedScore: {
+              $cond: {
+                if: { $eq: ["$starred", true] },
+                then: { $add: [{ $meta: "searchScore" }, 2.5] },
+                else: { $add: [{ $meta: "searchScore" }, 1] },
+              },
+            },
+          },
+        },
+      ]),
 
-    // Adds Weights to the results to give priority to USDA foods over Barcode products
-    const usdaWithWeight = usdaSearchResult.map((item) => ({
-      ...item,
-      adjustedScore: item.starred
-        ? (item.score || 0) + 2
-        : (item.score || 0) + 1.5,
-    }));
+      // 2. BARCODE FOODS SEARCH (2M Records)
+      BarcodeFood.aggregate([
+        {
+          $search: {
+            index: "default",
+            text: {
+              query: searchInput,
+              path: ["name", "brands"],
+              fuzzy: { maxEdits: 1 },
+            },
+          },
+        },
+        { $limit: 30 },
+        {
+          $set: {
+            score: { $meta: "searchScore" },
+            adjustedScore: {
+              $cond: {
+                if: { $eq: ["$starred", true] },
+                then: { $add: [{ $meta: "searchScore" }, 0] },
+                else: { $add: [{ $meta: "searchScore" }, -3] },
+              },
+            },
+          },
+        },
+      ]),
+    ]);
 
-    const barcodeWithWeight = barcodeSearchResult.map((item) => ({
-      ...item,
-      adjustedScore: item.score || 0,
-    }));
-    const searchResult = [...usdaWithWeight, ...barcodeWithWeight];
+    const searchResult = [...usdaSearchResult, ...barcodeSearchResult];
     searchResult.sort((a, b) => b.adjustedScore - a.adjustedScore);
-    // console.log(
-    //   searchResult.map((obj) => ({
-    //     name: obj.name,
-    //     brands: obj.brands,
-    //     adjustedScore: obj.adjustedScore,
-    //   })),
-    // );
+
     res.status(200).json(searchResult);
   } catch (error) {
     res.status(500).send();
