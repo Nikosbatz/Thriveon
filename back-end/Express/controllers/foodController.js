@@ -130,8 +130,6 @@ async function logUserFood(req, res) {
         food.name === data.name && food.loggedQuantity === data.loggedQuantity,
     );
 
-    console.log(foodExistsInHistory);
-
     // Define an object representing the query regarding foodHistory
     // if food exists in foodHistory, object remains empty and query does nothing
     const foodHistoryInsertQuery = {};
@@ -250,7 +248,6 @@ async function deleteRecipe(req, res) {
       { new: true },
     );
 
-    console.log(logs.myFoods);
     if (logs) {
       res.status(200).json({ myFoods: logs.myFoods });
     } else {

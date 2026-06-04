@@ -20,7 +20,7 @@ export default function LandingPage() {
     <div className="landing-page-root">
       <header className="landing-page-header">
         <div className="logo-container">
-          <img src="../assets/logo_chat.png" alt="" />
+          <img src="../assets/logo_transparent.png" alt="" />
           <div>
             <h2>Thriveon</h2>
             <p>Track. Grow. Thriveon.</p>
@@ -42,6 +42,26 @@ export default function LandingPage() {
             <Flame />
             The first<span>100% free</span>Calorie Tracker App
           </div>
+
+          <div>
+            <a
+              href="https://play.google.com/store/apps/details?id=com.enbydev.thriveon"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <img
+                style={{
+                  width: 150,
+                  backgroundColor: "white",
+                  borderRadius: 10,
+                  cursor: "pointer",
+                }}
+                src="./assets/playstore_badge.png"
+                alt="Get ThriveOn Calorie Tracker on Google Play"
+              />
+            </a>
+          </div>
+
           <h1>
             Your Personal <span>Nutrition Companion</span>
           </h1>
@@ -104,7 +124,7 @@ export default function LandingPage() {
       </main>
       <footer className="landing-page-footer">
         <div className="logo-container">
-          <Activity />
+          <img src="../assets/logo_transparent.png" alt="" />
           <h2>ThriveOn</h2>
         </div>
         <div>

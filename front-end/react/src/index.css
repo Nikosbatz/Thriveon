@@ -215,8 +215,8 @@ body.no-scroll {
 }
 
 .landing-page-root .logo-container img {
-  width: 5em;
-  height: 3em;
+  width: 4em;
+  border-radius: 15px;
 }
 .landing-page-root .logo-container svg {
   background-color: var(--lv-primary-20);

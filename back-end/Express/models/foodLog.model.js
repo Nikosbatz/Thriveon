@@ -19,6 +19,7 @@ const loggedFoodSchema = new mongoose.Schema(
     fiber: Number,
     sodium: Number,
     grams: Number,
+    starred: Boolean,
     portions: [
       {
         modifier: String,
