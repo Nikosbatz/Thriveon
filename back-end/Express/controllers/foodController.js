@@ -3,6 +3,7 @@ const BarcodeFood = require("../models/barcodeFood.model.js");
 const FoodLog = require("../models/foodLog.model.js");
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
+const Recipe = require("../models/recipe.model.js");
 dayjs.extend(utc);
 
 async function getFoods(req, res) {
@@ -102,43 +103,45 @@ async function getUserFoods(req, res) {
 
 // TODO: When deleting food from the foodLogs also delete if from foodHistory (Maybe use the _id of the logs.food _id in the
 //  foodHistory object to map the correct object on the foodHistory on delete)
-
 async function logUserFood(req, res) {
   const date = req.params.date;
   const data = req.body;
   const userId = req.userId;
 
-  if (data.loggedQuantity <= 0) {
+  if (data.loggedQuantity && data.loggedQuantity <= 0) {
     return res.status(400).send();
   }
 
-  console.log(data);
   let logs = null;
   try {
-    // Query to get foodHistory
-    const queryResult = await FoodLog.findOne(
-      {
-        userId: userId,
-      },
-      { foodHistory: 1 },
-    );
-
-    // Dont allow duplicates in foodhistory
-    // Duplicate is defined as same name and same quantity
-    const foodExistsInHistory = queryResult.foodHistory.find(
-      (food) =>
-        food.name === data.name && food.loggedQuantity === data.loggedQuantity,
-    );
-
-    // Define an object representing the query regarding foodHistory
-    // if food exists in foodHistory, object remains empty and query does nothing
     const foodHistoryInsertQuery = {};
-    if (!foodExistsInHistory) {
-      foodHistoryInsertQuery.foodHistory = {
-        $each: [data],
-        $position: 0,
-        $slice: 20, // Keep only the 20 most recent entries in foodHistory
-      };
+    // If food has a loggedQuantity property (It is not a recipe) then add it to foodhistory
+    // FOOD HISTORY BLOCK
+    if (data.loggedQuantity) {
+      // Query to get foodHistory
+      const queryResult = await FoodLog.findOne(
+        {
+          userId: userId,
+        },
+        { foodHistory: 1 },
+      );
+
+      // Dont allow duplicates in foodhistory
+      // Duplicate is defined as same name and same quantity
+      const foodExistsInHistory = queryResult.foodHistory.find(
+        (food) =>
+          food.name === data.name &&
+          food.loggedQuantity === data.loggedQuantity,
+      );
+
+      // if food exists in foodHistory, foodHistoryInsertQuery remains empty and query does nothing
+      if (!foodExistsInHistory) {
+        foodHistoryInsertQuery.foodHistory = {
+          $each: [data],
+          $position: 0,
+          $slice: 20, // Keep only the 20 most recent entries in foodHistory
+        };
+      }
     }
 
     logs = await FoodLog.findOneAndUpdate(
@@ -208,19 +211,20 @@ async function logUserFood(req, res) {
       }
     }
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Error 500\nFailed to Log food..." });
   }
 }
 
-async function createRecipe(req, res) {
+async function createMyFood(req, res) {
   const userId = req.userId;
-  const recipe = req.body;
+  const myfood = req.body;
 
   try {
     const updatedLog = await FoodLog.findOneAndUpdate(
       { userId: userId },
       {
-        $push: { myFoods: recipe }, // Push item or create array if it doesn't exist.
+        $push: { myFoods: myfood }, // Push item or create array if it doesn't exist.
       },
       {
         new: true, // Return the modified document instead of the original
@@ -237,14 +241,14 @@ async function createRecipe(req, res) {
   return res.status(200).send();
 }
 
-async function deleteRecipe(req, res) {
+async function deleteMyFood(req, res) {
   const userId = req.userId;
-  const recipeId = req.params.recipeId;
+  const myFoodId = req.params.myFoodId;
 
   try {
     const logs = await FoodLog.findOneAndUpdate(
       { userId: userId },
-      { $pull: { myFoods: { _id: recipeId } } },
+      { $pull: { myFoods: { _id: myFoodId } } },
       { new: true },
     );
 
@@ -252,7 +256,7 @@ async function deleteRecipe(req, res) {
       res.status(200).json({ myFoods: logs.myFoods });
     } else {
       throw new Error(
-        `ERROR!\nDelete operation on food._id:${recipeId} FAILED!`,
+        `ERROR!\nDelete operation on food._id:${myFoodId} FAILED!`,
       );
     }
   } catch (error) {
@@ -375,6 +379,16 @@ async function getSearchFoods(req, res) {
   }
 }
 
+async function getRecipes(req, res) {
+  try {
+    const recipes = await Recipe.find({});
+    return res.status(200).json(recipes);
+  } catch (error) {
+    console.error("Error fetching recipes:", error);
+    return res.status(500).send();
+  }
+}
+
 //-------- --------//
 module.exports = {
   getFoods,
@@ -385,6 +399,7 @@ module.exports = {
   getUserFoods,
   getBarcodeFood,
   getSearchFoods,
-  createRecipe,
-  deleteRecipe,
+  createMyFood,
+  deleteMyFood,
+  getRecipes,
 };

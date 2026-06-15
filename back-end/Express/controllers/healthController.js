@@ -106,7 +106,6 @@ async function getUserWeightLogs(req, res) {
           .slice(-7);
       }
 
-      console.log(finalWeightLogs);
       res.status(200).json({ data: finalWeightLogs });
     }
   } catch (err) {
@@ -135,7 +134,6 @@ async function postUserWeightLog(req, res) {
       { new: true },
     );
 
-    console.log("weight: ", weight);
     // Update the User Document
     const userDocWeight = await User.findOneAndUpdate(
       {

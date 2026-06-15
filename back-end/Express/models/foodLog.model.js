@@ -6,19 +6,18 @@ const loggedFoodSchema = new mongoose.Schema(
   {
     foodId: { type: mongoose.Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
-    loggedQuantity: { type: Number, required: true },
     grams: { type: Number, required: true },
     calories: { type: Number, required: true },
     protein: { type: Number, required: true },
     carbs: { type: Number, required: true },
     fats: { type: Number, required: true },
     mealType: { type: String, required: true },
-    selectedServingIndex: { type: Number, required: true },
+    loggedQuantity: { type: Number }, // not required so recipes can be logged
+    selectedServingIndex: { type: Number }, // not required so recipes can be logged
     code: String,
     brands: String,
     fiber: Number,
     sodium: Number,
-    grams: Number,
     starred: Boolean,
     portions: [
       {
@@ -32,7 +31,8 @@ const loggedFoodSchema = new mongoose.Schema(
   { strict: true },
 );
 
-const recipeSchema = new mongoose.Schema(
+// Helper schema for foodLogSchema
+const myFoodSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     calories: { type: Number, required: true },
@@ -72,7 +72,7 @@ const foodLogSchema = mongoose.Schema({
     type: [loggedFoodSchema],
     default: [],
   },
-  myFoods: { type: [recipeSchema], default: [] },
+  myFoods: { type: [myFoodSchema], default: [] },
   logs: [
     {
       date: { type: String, required: true },

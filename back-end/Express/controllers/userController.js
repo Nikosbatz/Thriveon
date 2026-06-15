@@ -58,8 +58,6 @@ async function createUser(req, res) {
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
     });
 
-    console.log(user);
-
     // Create mongoDB document in foodlogs collection for the created User
     const log = await FoodLog.create({
       userId: user._id,
@@ -346,8 +344,6 @@ async function getInfo(req, res) {
 async function updateInfo(req, res) {
   const userId = req.userId;
   const body = req.body;
-
-  console.log(req.body);
 
   body.onBoardingCompleted = true;
   const allowedFields = [
