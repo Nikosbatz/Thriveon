@@ -33,13 +33,16 @@ app.use("/api/activities", activitiesRouter);
 
 // PRODUCTION MODE ONLY
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../../front-end/react/build")));
-
+  // app-ads.txt route
   app.get("/app-ads.txt", (req, res) => {
-    res.sendFile(path.join(__dirname, "/app-ads.txt"));
+    res.sendFile(path.join(__dirname, "app-ads.txt"));
   });
 
-  app.get(/(.*)/, (req, res) => {
+  // Static files
+  app.use(express.static(path.join(__dirname, "../../front-end/react/build")));
+
+  // Wildcard / Catch-all
+  app.get("*", (req, res) => {
     res.sendFile(
       path.resolve(__dirname, "../../front-end/react/build/index.html"),
     );
